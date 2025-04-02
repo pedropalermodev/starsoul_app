@@ -70,7 +70,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         width: 45,
                         height: 45,
                         child: ElevatedButton(
-                        onPressed: handleLogin, 
+                        onPressed: () => Navigator.of(context).pushNamed('/user_experience'), 
                         child: Center(
                           child: Container(
                             width: 45,
@@ -88,12 +88,12 @@ class _WelcomePageState extends State<WelcomePage> {
                         )
                       ),
 
-                      SizedBox(height: 40,),
+                      SizedBox(height: 20,),
 
                       SizedBox(
                         width: 250,
                         child: ElevatedButton(
-                        onPressed: handleRegister, 
+                        onPressed: () => Navigator.of(context).pushNamed('/login'), 
                         child: Center(
                           child: Text(
                             'Já possuo uma conta',
