@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:starsoul_app/screens/services/user_provider.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -8,9 +10,18 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  void handleLogin() {}
-
-  void handleRegister() {}
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      if (userProvider.isAuthenticated) {
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/home', (route) => false);
+      }
+    });
+  }
 
   // - - - -
 
@@ -55,7 +66,10 @@ class _WelcomePageState extends State<WelcomePage> {
                       children: [
                         ElevatedButton(
                           onPressed:
-                              () => Navigator.of(context).pushNamed('/login'),
+                              () =>
+                                  Navigator.of(context).pushNamed(
+                                    '/login',
+                                  ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -78,15 +92,16 @@ class _WelcomePageState extends State<WelcomePage> {
 
                         SizedBox(
                           child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pushNamed('/'),
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(Color(0xFF1A2951)),
-                                ),
+                            onPressed:
+                                () => Navigator.of(context).pushNamed('/'),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                Color(0xFF1A2951),
+                              ),
+                            ),
                             child: Text(
                               'Criar uma conta 🔗',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),

@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
 
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

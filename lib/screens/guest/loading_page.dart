@@ -20,14 +20,15 @@ class _LoadingPageState extends State<LoadingPage> {
 
   Future<void> _checkUserStatus() async {
     await Future.delayed(const Duration(seconds: 2));
-
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     await userProvider.loadUserFromToken(); // Carrega os dados do token
 
     if (userProvider.isAuthenticated) {
-      Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
     } else {
-      Navigator.of(context).pushReplacementNamed('/welcome');
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil('/welcome', (route) => false);
     }
   }
 

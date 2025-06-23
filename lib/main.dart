@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:starsoul_app/main_page.dart';
 import 'package:starsoul_app/screens/services/user_provider.dart';
 import 'package:starsoul_app/screens/guest/loading_page.dart';
 import 'package:starsoul_app/screens/guest/welcome_page.dart';
 import 'package:starsoul_app/screens/auth/login_page.dart';
-import 'package:starsoul_app/screens/authenticated/home_page.dart';
+
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -27,12 +28,9 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LoadingPage(),
         '/welcome': (context) => const WelcomePage(),
         '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-
+        '/main': (context) => const MainPage(),
       },
-      theme: ThemeData(
-        fontFamily: 'Poppins'
-      ),
+      theme: ThemeData(fontFamily: 'Poppins'),
     );
   }
 }

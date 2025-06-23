@@ -43,6 +43,17 @@ flutter:
     - assets/mark/icon.png
     - assets/mark/combinationmark-white.png
     - assets/elements/arrow-welcome.png
+    - assets/navbar/config-unselect.png
+    - assets/navbar/config-select.png
+    - assets/navbar/favorite-unselect.png
+    - assets/navbar/favorite-select.png
+    - assets/navbar/home-unselect.png
+    - assets/navbar/home-select.png
+    - assets/navbar/notify-unselect.png
+    - assets/navbar/notify-select.png
+    - assets/navbar/book.png
+
+    
 
   fonts:
     - family: Poppins
