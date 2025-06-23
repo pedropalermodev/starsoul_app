@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:starsoul_app/screens/services/user_provider.dart';
+import 'package:starsoul_app/screens/guest/loading_page.dart';
 import 'package:starsoul_app/screens/guest/welcome_page.dart';
-import 'package:starsoul_app/screens/authenticated/login_page.dart';
-import 'package:starsoul_app/screens/auth/home_page.dart';
-
+import 'package:starsoul_app/screens/auth/login_page.dart';
+import 'package:starsoul_app/screens/authenticated/home_page.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,11 +22,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'StarSoul',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/welcome',
+      initialRoute: '/',
       routes: {
-        '/welcome': (context) => WelcomePage(),
-        '/login': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
+        '/': (context) => const LoadingPage(),
+        '/welcome': (context) => const WelcomePage(),
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const HomePage(),
 
       },
       theme: ThemeData(
