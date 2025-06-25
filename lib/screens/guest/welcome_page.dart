@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:starsoul_app/screens/services/user_provider.dart';
+import 'package:starsoul_app/services/user_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -66,10 +67,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       children: [
                         ElevatedButton(
                           onPressed:
-                              () =>
-                                  Navigator.of(context).pushNamed(
-                                    '/login',
-                                  ),
+                              () => Navigator.of(context).pushNamed('/login'),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -92,15 +90,19 @@ class _WelcomePageState extends State<WelcomePage> {
 
                         SizedBox(
                           child: ElevatedButton(
-                            onPressed:
-                                () => Navigator.of(context).pushNamed('/'),
+                            onPressed: () {
+                              final Uri url = Uri.parse(
+                                'https://starsoul.netlify.app/sign-up',
+                              );
+                              launchUrl(url);
+                            },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                 Color(0xFF1A2951),
                               ),
                             ),
                             child: Text(
-                              'Criar uma conta 🔗',
+                              'Criar uma conta',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),

@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
-import 'package:starsoul_app/screens/services/user_provider.dart';
+import 'package:starsoul_app/services/user_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,15 +52,9 @@ class _LoginPageState extends State<LoginPage> {
           await _sharedPreferences.setString('token', token);
           await Provider.of<UserProvider>(context, listen: false).login(token);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login realizado com sucesso!'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-
-          Navigator.of(context).pushNamedAndRemoveUntil('/main', (route) => false);
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/main', (route) => false);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -284,28 +279,34 @@ class _LoginPageState extends State<LoginPage> {
 
                                     SizedBox(width: 5),
 
-                                    Text(
-                                      'Recuperar senha 🔗',
-                                      style: TextStyle(
-                                        color: Color(0xFFA9C0FF),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-
-                                    // TextButton(
-                                    //   onPressed: () {
-                                    //     final Uri url = Uri.parse(
-                                    //       'https://www.sua-url-de-recuperacao.com/senha',
-                                    //     );
-                                    //     launchUrl(url); // Chamada sem await
-                                    //   },
-                                    //   child: Text(
-                                    //     'Recuperar senha 🔗',
-                                    //     style: TextStyle(
-                                    //       color: Color(0xFFA9C0FF)
-                                    //     ),
+                                    // Text(
+                                    //   'Recuperar senha 🔗',
+                                    //   style: TextStyle(
+                                    //     color: Color(0xFFA9C0FF),
+                                    //     fontSize: 12,
                                     //   ),
                                     // ),
+                                    TextButton(
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      onPressed: () {
+                                        final Uri url = Uri.parse(
+                                          'https://starsoul.netlify.app/reset-password',
+                                        );
+                                        launchUrl(url);
+                                      },
+                                      child: Text(
+                                        'Recuperar senha',
+                                        style: TextStyle(
+                                          color: Color(0xFFA9C0FF),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
 
@@ -387,28 +388,32 @@ class _LoginPageState extends State<LoginPage> {
 
                             SizedBox(width: 5),
 
-                            Text(
-                              'Crie-a 🔗',
-                              style: TextStyle(
-                                color: Color(0xFFA9C0FF),
-                                fontSize: 12,
+                            // Text(
+                            //   'Crie-a 🔗',
+                            //   style: TextStyle(
+                            //     color: Color(0xFFA9C0FF),
+                            //     fontSize: 12,
+                            //   ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed: () {
+                                final Uri url = Uri.parse(
+                                  'https://starsoul.netlify.app/sign-up',
+                                );
+                                launchUrl(url); // Chamada sem await
+                              },
+                              child: Text(
+                                'Crie-a',
+                                style: TextStyle(
+                                  color: Color(0xFFA9C0FF),
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-
-                            // TextButton(
-                            //   onPressed: () {
-                            //     final Uri url = Uri.parse(
-                            //       'https://www.sua-url-de-recuperacao.com/senha',
-                            //     );
-                            //     launchUrl(url); // Chamada sem await
-                            //   },
-                            //   child: Text(
-                            //     'Recuperar senha 🔗',
-                            //     style: TextStyle(
-                            //       color: Color(0xFFA9C0FF)
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),

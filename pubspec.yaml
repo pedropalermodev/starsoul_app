@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^2.5.3
   jwt_decoder: ^2.0.1
   provider: ^6.1.5
+  url_launcher: ^6.3.1
 
 
 flutter_native_splash:
@@ -37,21 +38,10 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   assets:
-    - assets/backgrounds/splashscreen.png #// Fundo da SplashScreen
-    - assets/backgrounds/welcome.png #// Fundo tela de Boas-Vindas
-    - assets/mark/logo.png 
-    - assets/mark/icon.png
-    - assets/mark/combinationmark-white.png
-    - assets/elements/arrow-welcome.png
-    - assets/navbar/config-unselect.png
-    - assets/navbar/config-select.png
-    - assets/navbar/favorite-unselect.png
-    - assets/navbar/favorite-select.png
-    - assets/navbar/home-unselect.png
-    - assets/navbar/home-select.png
-    - assets/navbar/notify-unselect.png
-    - assets/navbar/notify-select.png
-    - assets/navbar/book.png
+    - assets/backgrounds/ #// Fundo tela de Boas-Vindas
+    - assets/mark/
+    - assets/navbar/
+    - assets/elements/
 
     
 

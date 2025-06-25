@@ -11,9 +11,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(
-        'Página de notificações'
-      ),
-    );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Text('Página de notificações')])
+      );
   }
 }

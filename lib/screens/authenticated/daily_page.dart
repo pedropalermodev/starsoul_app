@@ -11,8 +11,9 @@ class _DailyPageState extends State<DailyPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(
-        'Página de diário'
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [Text('Página de diário')],
       ),
     );
   }

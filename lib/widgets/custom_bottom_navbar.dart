@@ -12,11 +12,10 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double iconSize = 24.0;
 
     return Container(
       width: double.infinity,
-      height: 135, 
+      height: 145,
       padding: const EdgeInsets.only(bottom: 8),
       color: const Color(0xFF1A2951),
       child: Stack(
@@ -27,6 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               height: 90,
               color: const Color(0xFF1A2951),
               child: Row(
@@ -44,7 +44,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     iconPath: 'assets/navbar/home-unselect.png',
                     activeIconPath: 'assets/navbar/home-select.png',
                   ),
-                  const SizedBox(width: 10), // Espaço para o botão central
+                  const SizedBox(width: 32), // Espaço para o botão central
                   navItem(
                     index: 3,
                     label: 'Notificações',
@@ -73,10 +73,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF613EEA),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFA9C0FF),
-                    width: 4,
-                  ),
+                  border: Border.all(color: const Color(0xFFA9C0FF), width: 3),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
@@ -88,8 +85,8 @@ class CustomBottomNavBar extends StatelessWidget {
                 child: Center(
                   child: Image.asset(
                     'assets/navbar/book.png',
-                    width: 30,
-                    height: 30,
+                    width: 25,
+                    height: 25,
                   ),
                 ),
               ),
@@ -109,24 +106,29 @@ class CustomBottomNavBar extends StatelessWidget {
     final bool isSelected = currentIndex == index;
 
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () => onTap(index),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            isSelected ? activeIconPath : iconPath,
-            width: 24,
-            height: 24,
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? const Color(0xFF386BF6) : Colors.white,
-              fontSize: 12,
+      child: SizedBox(
+        width: 80,
+        height: 80,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              isSelected ? activeIconPath : iconPath,
+              width: 24,
+              height: 24,
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? const Color(0xFF386BF6) : Colors.white,
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

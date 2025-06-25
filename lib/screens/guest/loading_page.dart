@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:starsoul_app/screens/services/user_provider.dart';
+import 'package:starsoul_app/services/user_provider.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
@@ -45,8 +45,16 @@ class _LoadingPageState extends State<LoadingPage> {
             colors: [Color(0xFF3C5DB7), Color(0xFF1A2951)],
           ),
         ),
-        child: Center(
-          child: Image.asset('assets/mark/logo.png', width: 150, height: 150),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset('assets/mark/logo.png', width: 150, height: 150),
+            SizedBox(height: 20),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
         ),
       ),
     );

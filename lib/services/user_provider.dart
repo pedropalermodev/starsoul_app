@@ -17,7 +17,7 @@ class UserProvider with ChangeNotifier {
 
   // Método para carregar os dados do usuário
   Future<void> loadUserFromToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance(); // Usar 'prefs' para consistência
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
 
     if (token != null && token.isNotEmpty) {
