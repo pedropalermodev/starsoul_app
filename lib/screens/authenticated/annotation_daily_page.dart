@@ -120,9 +120,10 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF3C5DB7),
+      backgroundColor: Color(0xFF2B4384),
+
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3C5DB7),
+        backgroundColor: const Color(0xFF2B4384),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
@@ -199,12 +200,14 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
                 maxLines: 7,
                 decoration: InputDecoration(
                   labelText: 'Escreva aqui sobre seu dia...',
-                  labelStyle: const TextStyle(color: Colors.white),
+                  labelStyle: const TextStyle(
+                    color: Color.fromARGB(73, 255, 255, 255),
+                  ),
                   alignLabelWithHint: true,
 
                   enabledBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
-                      color: Color.fromARGB(111, 255, 255, 255),
+                      color: Color.fromARGB(73, 255, 255, 255),
                       width: 1.0,
                     ),
                     borderRadius: BorderRadius.circular(8.0),
@@ -213,12 +216,10 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
                   // --- Borda quando o campo ESTÁ focado ---
                   focusedBorder: OutlineInputBorder(
                     borderSide: const BorderSide(
-                      color: Color.fromARGB(111, 255, 255, 255),
+                      color: Color.fromARGB(73, 255, 255, 255),
                       width: 1.0,
                     ),
-                    borderRadius: BorderRadius.circular(
-                      8.0,
-                    ),
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
                 validator: (value) {

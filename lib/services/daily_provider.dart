@@ -119,7 +119,7 @@ class DailyProvider with ChangeNotifier {
 
     try {
       var url = Uri.parse(
-        'https://starsoul-backend.onrender.com/api/anotacoes/cadastrar',
+        'https://starsoul-backend.onrender.com/api/anotacoes/$id',
       );
       var response = await http.delete(
         url,
@@ -128,10 +128,13 @@ class DailyProvider with ChangeNotifier {
           'Authorization': 'Bearer $userToken',
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 204) {
         _notes.removeWhere((note) => note.id == id);
+        _errorMessage = null; // Limpa qualquer erro anterior
+        print('Anotação com ID $id deletada com sucesso!');
       } else {
         _errorMessage = 'Falha ao deletar anotação: ${response.statusCode}';
+        print('Erro ao deletar anotação: Status ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e) {
       _errorMessage = 'Erro ao deletar anotação: $e';

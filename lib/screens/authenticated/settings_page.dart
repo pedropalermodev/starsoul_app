@@ -64,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Container(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0 , bottom: 20.0),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: const Color.fromARGB(71, 114, 135, 255),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -119,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Container(
                   padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 20.0 , bottom: 20.0),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: const Color.fromARGB(71, 114, 135, 255),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:starsoul_app/services/user_provider.dart'; // Ajuste o caminho conforme o seu projeto
-import 'package:intl/intl.dart'; // Para formatar a data de nascimento
-import 'package:flutter_localizations/flutter_localizations.dart'; // Necessário para internacionalização do DatePicker
+import 'package:starsoul_app/services/user_provider.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as datetime_picker;
 
 class PersonalInfoPage extends StatefulWidget {
   const PersonalInfoPage({super.key});
@@ -16,21 +18,17 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _nicknameController = TextEditingController();
-  final _birthdayController =
-      TextEditingController(); // Para exibir a data formatada
+  final _birthdayController = TextEditingController();
+  final _genderController = TextEditingController();
 
-  DateTime?
-  _selectedBirthDate; // Para guardar a data selecionada pelo DatePicker
-  String? _selectedGender; // Para guardar o gênero selecionado no Dropdown
+  DateTime? _selectedBirthDate;
+  String? _selectedGender;
 
-  bool _isLoading = true; // Começa como true para indicar carregamento inicial
+  bool _isLoading = true;
 
-  // Data mínima permitida para nascimento (06 de outubro de 1911)
   final DateTime _minBirthDate = DateTime(1911, 10, 6);
-  // Data máxima permitida para nascimento (hoje)
   final DateTime _maxBirthDate = DateTime.now();
 
-  // Opções para o Dropdown de gênero
   final List<String> _genderOptions = [
     'Masculino',
     'Feminino',
@@ -41,98 +39,144 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   @override
   void initState() {
     super.initState();
-    // Chama a função para carregar os dados do usuário após o build inicial
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserData();
     });
   }
 
-  // Função para carregar os dados do UserProvider e preencher os TextControllers
   void _loadUserData() {
-    // Usamos listen: false porque só precisamos dos dados uma vez para preencher os controladores.
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     _nameController.text = userProvider.userName ?? '';
     _emailController.text = userProvider.userEmail ?? '';
     _nicknameController.text = userProvider.userNickname ?? '';
 
-    // Formata e preenche a data de nascimento
     if (userProvider.userBirthDate != null) {
-      _selectedBirthDate = userProvider.userBirthDate;
-      // Usar DateFormat.yMd para formato localizado (ex: 20/07/2025 ou 07/20/2025)
-      // ou DateFormat('dd/MM/yyyy') se quiser forçar o formato BR.
-      _birthdayController.text = DateFormat.yMd().format(_selectedBirthDate!);
-    } else {
-      _birthdayController.text = '';
-      _selectedBirthDate =
-          null; // Garante que a variável esteja nula se não houver data
-    }
+  _selectedBirthDate = userProvider.userBirthDate;
+  _birthdayController.text = DateFormat('dd/MM/yyyy').format(_selectedBirthDate!);
+  } else {
+    _birthdayController.text = '';
+    _selectedBirthDate = null;
+  }
 
-    // Preenche o gênero, garantindo que seja uma das opções ou nulo
     if (userProvider.userGender != null &&
         _genderOptions.contains(userProvider.userGender)) {
       _selectedGender = userProvider.userGender;
+      _genderController.text = userProvider.userGender!;
     } else {
-      _selectedGender =
-          null; // Limpa se não houver ou se não for uma opção válida
+      _selectedGender = null;
+      _genderController.text = '';
     }
 
     setState(() {
-      _isLoading = false; // Define como não carregando após preencher os dados
+      _isLoading = false;
     });
   }
 
-  // Função para abrir o DatePicker
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime initialPickerDate = _selectedBirthDate ?? _maxBirthDate;
+
+    datetime_picker.DatePicker.showDatePicker(
+      context,
+      showTitleActions: true,
+      minTime: _minBirthDate,
+      maxTime: _maxBirthDate,
+      onConfirm: (date) {
+        setState(() {
+          _selectedBirthDate = date;
+          _birthdayController.text = DateFormat('dd/MM/yyyy').format(date);
+          _formKey.currentState?.validate();
+        });
+      },
+      currentTime: initialPickerDate,
+      locale: datetime_picker.LocaleType.pt,
+      theme: datetime_picker.DatePickerTheme(
+        backgroundColor: const Color(0xFF1A2951),
+        itemStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+        doneStyle: const TextStyle(color: Color(0xFF6C63FF), fontSize: 16),
+        cancelStyle: const TextStyle(color: Colors.white70, fontSize: 16),
+        headerColor: const Color(0xFF1A2951),
+      ),
+    );
+  }
+
+  Future<void> _selectGender(BuildContext context) async {
+    final String? selectedOption = await showModalBottomSheet<String>(
       context: context,
-      initialDate:
-          _selectedBirthDate ??
-          _maxBirthDate, // Inicia na data atual ou na selecionada
-      firstDate: _minBirthDate, // Data mínima permitida
-      lastDate: _maxBirthDate, // Data máxima permitida (hoje)
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(
-                0xFF6C63FF,
-              ), // Cor dos botões e cabeçalho do DatePicker
-              onPrimary: Colors.white, // Cor do texto nos botões e cabeçalho
-              surface: Color(0xFF1A2951), // Cor de fundo do seletor de data
-              onSurface: Colors.white, // Cor do texto no seletor de data
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white, // Cor do texto dos botões
-              ),
+      backgroundColor:
+          Colors.transparent, // Fundo transparente para o arredondamento
+      builder: (BuildContext bc) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFF1A2951),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
             ),
           ),
-          child: child!,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16.0),
+
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: _genderOptions.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final gender = _genderOptions[index];
+                  return ListTile(
+                    title: Text(
+                      gender,
+                      style: TextStyle(
+                        color:
+                            _selectedGender == gender
+                                ? Color(0xFF6C63FF)
+                                : Colors.white,
+                        fontWeight:
+                            _selectedGender == gender
+                                ? FontWeight.w500
+                                : FontWeight.w400,
+                        fontSize: 14,
+                      ),
+                    ),
+                    trailing:
+                        _selectedGender == gender
+                            ? const Icon(Icons.check, color: Color(0xFF6C63FF))
+                            : null,
+                    onTap: () {
+                      Navigator.of(context).pop(gender);
+                    },
+                  );
+                },
+              ),
+              const SizedBox(height: 16.0),
+            ],
+          ),
         );
       },
     );
-    if (picked != null && picked != _selectedBirthDate) {
+
+    // Se uma opção foi selecionada (selectedOption não é nulo), atualize o estado
+    if (selectedOption != null) {
       setState(() {
-        _selectedBirthDate = picked;
-        _birthdayController.text = DateFormat.yMd().format(
-          picked,
-        ); // Formato localizado
-        // Valida o campo de data de nascimento imediatamente após a seleção
-        _formKey.currentState?.validate();
+        _selectedGender = selectedOption;
+        _genderController.text =
+            selectedOption; // Atualiza o controller do campo
       });
     }
   }
 
-  // Função para lidar com a atualização dos dados
   Future<void> _updatePersonalInfo() async {
-    // Valida o formulário antes de prosseguir
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     setState(() {
-      _isLoading = true; // Mostra o indicador de carregamento no botão
+      _isLoading = true;
     });
 
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -144,11 +188,11 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
               .trim(), // Considerar validação de email no backend
       newNickname: _nicknameController.text.trim(),
       newBirthDate: _selectedBirthDate, // Passa o objeto DateTime
-      newGender: _selectedGender, // Passa o String selecionado
+      newGender: _selectedGender,
     );
 
     setState(() {
-      _isLoading = false; // Esconde o indicador de carregamento
+      _isLoading = false;
     });
 
     if (success) {
@@ -172,6 +216,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     _emailController.dispose();
     _nicknameController.dispose();
     _birthdayController.dispose();
+    _genderController.dispose();
     super.dispose();
   }
 
@@ -209,15 +254,11 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                   child: CircularProgressIndicator(color: Colors.white),
                 )
                 : SingleChildScrollView(
-                  padding: const EdgeInsets.all(
-                    24.0,
-                  ), // Aumentei o padding para mais respiro
+                  padding: const EdgeInsets.all(24.0),
                   child: Form(
                     key: _formKey,
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .stretch, // Estende os campos horizontalmente
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const Text(
                           'Gerencie suas informações pessoais.',
@@ -226,7 +267,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                             fontSize: 16,
                             fontStyle: FontStyle.italic,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
 
@@ -242,8 +282,8 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 20), // Aumentei o espaçamento
-                        // Campo Email (somente leitura)
+                        const SizedBox(height: 20),
+
                         _buildTextFormField(
                           controller: _emailController,
                           labelText: 'Email',
@@ -253,7 +293,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Campo Apelido
                         _buildTextFormField(
                           controller: _nicknameController,
                           labelText: 'Apelido (opcional)',
@@ -261,7 +300,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Campo Data de Nascimento (com DatePicker)
                         _buildTextFormField(
                           controller: _birthdayController,
                           labelText: 'Data de Nascimento (opcional)',
@@ -274,7 +312,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                           validator: (value) {
                             if (_selectedBirthDate == null &&
                                 value!.isNotEmpty) {
-                              // Se o campo de texto não está vazio mas _selectedBirthDate é nulo, houve um erro no parse inicial.
                               return 'Formato de data inválido. Selecione novamente.';
                             }
                             if (_selectedBirthDate != null) {
@@ -282,7 +319,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                                 return 'Data de nascimento não pode ser no futuro.';
                               }
                               if (_selectedBirthDate!.isBefore(_minBirthDate)) {
-                                return 'Data de nascimento muito antiga (min: ${DateFormat.yMd().format(_minBirthDate)}).';
+                                return 'Data de nascimento muito antiga (min: ${DateFormat('dd/MM/yyyy').format(_minBirthDate)}).';
                               }
                             }
                             return null;
@@ -290,64 +327,30 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Campo Gênero (Dropdown)
-                        DropdownButtonFormField<String>(
-                          value: _selectedGender,
-                          decoration: _inputDecoration(
-                            'Gênero (opcional)',
-                            const Icon(Icons.person, color: Colors.white),
-                          ),
-                          dropdownColor: const Color(0xFF1A2951),
-                          style: const TextStyle(color: Colors.white),
-                          icon: const Icon(
+                        _buildTextFormField(
+                          controller: _genderController,
+                          labelText: 'Gênero (opcional)',
+                          readOnly: true,
+                          onTap: () => _selectGender(context),
+                          suffixIcon: const Icon(
                             Icons.arrow_drop_down,
                             color: Colors.white,
-                          ), // Ícone do dropdown
-                          items:
-                              _genderOptions.map((String gender) {
-                                return DropdownMenuItem<String>(
-                                  value: gender,
-                                  child: Text(
-                                    gender,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                );
-                              }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedGender = newValue;
-                            });
-                          },
-                          hint: const Text(
-                            'Selecione',
-                            style: TextStyle(color: Colors.white70),
                           ),
                         ),
-                        const SizedBox(
-                          height: 40,
-                        ), // Mais espaçamento antes do botão
-                        // Botão de Salvar Alterações
+
+                        const SizedBox(height: 40),
+
                         Center(
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _updatePersonalInfo,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF6C63FF),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 50,
-                                vertical: 18,
-                              ), // Aumentei o padding
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  12,
-                                ), // Borda mais arredondada
-                              ),
-                              elevation: 5, // Sombra para destaque
+                              backgroundColor: Color(0xFF1A2951),
                             ),
                             child:
                                 _isLoading
                                     ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
+                                      width: 18,
+                                      height: 18,
                                       child: CircularProgressIndicator(
                                         color: Colors.white,
                                         strokeWidth: 2,
@@ -355,11 +358,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                                     )
                                     : const Text(
                                       'Salvar Alterações',
-                                      style: TextStyle(
-                                        fontSize: 19,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: TextStyle(color: Colors.white),
                                     ),
                           ),
                         ),
@@ -371,8 +370,6 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     );
   }
 
-  // --- Funções Auxiliares para Construção da UI ---
-
   Widget _buildTextFormField({
     required TextEditingController controller,
     required String labelText,
@@ -381,8 +378,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     VoidCallback? onTap,
     Widget? suffixIcon,
     Color textColor = Colors.white,
-    TextInputType keyboardType =
-        TextInputType.text, // Adicionado tipo de teclado
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return TextFormField(
       controller: controller,
