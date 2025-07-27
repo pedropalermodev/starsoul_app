@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starsoul_app/main_page.dart';
+import 'package:starsoul_app/screens/authenticated/history_page.dart';
+import 'package:starsoul_app/screens/authenticated/personalInfo_page.dart';
+import 'package:starsoul_app/services/daily_provider.dart';
 import 'package:starsoul_app/services/favorites_provider.dart';
 import 'package:starsoul_app/services/history_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
@@ -15,6 +18,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => DailyProvider()),
       ],
       child: const MyApp(),
     )
@@ -35,6 +39,8 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomePage(),
         '/login': (context) => const LoginPage(),
         '/main': (context) => const MainPage(),
+        // '/personal-info': (context) => const PersonalInfoPage(),
+        // '/history': (context) => const HistoryPage(),
       },
       theme: ThemeData(fontFamily: 'Poppins'),
     );

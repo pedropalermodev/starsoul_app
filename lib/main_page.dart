@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:starsoul_app/screens/authenticated/daily_page.dart';
 import 'package:starsoul_app/screens/authenticated/favorites_page.dart';
 import 'package:starsoul_app/screens/authenticated/home_page.dart';
-import 'package:starsoul_app/screens/authenticated/notifications_page.dart';
+import 'package:starsoul_app/screens/authenticated/meditation_tips_page.dart';
 import 'package:starsoul_app/screens/authenticated/settings_page.dart';
 import 'package:starsoul_app/services/user_provider.dart';
 import 'package:starsoul_app/widgets/custom_app_bar.dart';
@@ -24,37 +24,33 @@ class _MainPageState extends State<MainPage> {
     FavoritesPage(),
     HomePage(),
     DailyPage(),
-    NotificationsPage(),
+    MeditationTipsPage(),
     SettingsPage(),
   ];
 
   @override
   void initState() {
     super.initState();
-    // Inicialize a lista de appBars AQUI, dentro do initState
     appBars = [
       const CustomAppBar(title: 'Favoritos'),
       const CustomAppBar(showLogo: true),
       const CustomAppBar(title: 'Diário'),
-      const CustomAppBar(title: 'Notificações'),
+      const CustomAppBar(title: 'Dicas de Meditação'),
       CustomAppBar(
         title: 'Configurações',
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app, color: Colors.white),
             onPressed: () async {
-              // O context agora é válido aqui!
               final shouldLogout = await _showConfirmLogoutDialog(context);
-
               if (shouldLogout == true) {
                 final userProvider = Provider.of<UserProvider>(
                   context,
                   listen: false,
                 );
                 await userProvider.logout();
-                Navigator.of(
-                  context,
-                ).pushNamedAndRemoveUntil('/welcome', (route) => false);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/welcome', (route) => false);
               }
             },
           ),
@@ -63,7 +59,27 @@ class _MainPageState extends State<MainPage> {
     ];
   }
 
-  // Sua função _showConfirmLogoutDialog pode ficar aqui
+  Future<void> _handleRefresh() async {
+    setState(() {
+      // Aqui você pode atualizar dados, recarregar a tela, etc.
+    });
+    await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  Widget _buildRefreshablePage(Widget child) {
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            child: child,
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<bool?> _showConfirmLogoutDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,
@@ -97,20 +113,18 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: appBars[currentIndex],
       body: Container(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF3C5DB7), Color(0xFF1A2951)],
-            ),
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF3C5DB7), Color(0xFF1A2951)],
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: pages[currentIndex],
-          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: _buildRefreshablePage(pages[currentIndex]),
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
