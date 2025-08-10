@@ -59,11 +59,9 @@ class _HistoryPageState extends State<HistoryPage> {
     }
 
     String? videoId;
-    // Corrigindo as URLs de domínio do YouTube
-    if (uri.host == 'www.youtube.com' || // youtube.com
-        uri.host == 'youtube.com' || // www.youtube.com
+    if (uri.host == 'www.youtube.com' ||
+        uri.host == 'youtube.com' ||
         uri.host == 'youtu.be2') {
-      // m.youtube.com
       if (uri.queryParameters.containsKey('v')) {
         videoId = uri.queryParameters['v'];
       } else {
@@ -82,7 +80,7 @@ class _HistoryPageState extends State<HistoryPage> {
     }
 
     if (videoId != null && videoId.isNotEmpty) {
-      return 'https://img.youtube.com/vi/$videoId/hqdefault.jpg'; // Miniatura de alta qualidade
+      return 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
     }
     return null;
   }
@@ -171,19 +169,17 @@ class _HistoryPageState extends State<HistoryPage> {
                         ),
                       );
                     } else if (historyProvider.historyRecords.isEmpty) {
-                      // Se a lista estiver vazia, mostre a mensagem e permita o refresh
                       return RefreshIndicator(
                         onRefresh: _refreshHistory,
-                        color: Colors.white, // Cor do indicador de carregamento
+                        color: Colors.white,
                         backgroundColor: const Color(
                           0xFF3C5DB7,
-                        ), // Cor de fundo do indicador
+                        ),
                         child: ListView(
-                          // Use ListView puro ou SingleChildScrollView para permitir rolagem e refresh em listas vazias
                           physics:
-                              const AlwaysScrollableScrollPhysics(), // Garante que pode rolar mesmo vazio
+                              const AlwaysScrollableScrollPhysics(),
                           children: const [
-                            SizedBox(height: 50), // Espaçamento para a mensagem
+                            SizedBox(height: 50),
                             Center(
                               child: Text(
                                 'Nenhum histórico de visualização recente.',
@@ -197,7 +193,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         ),
                       );
                     } else {
-                      // Se houver dados, envolva o ListView.builder com RefreshIndicator
+                      
                       final Map<String, List<HistoryRecord>> groupedRecords =
                           {};
                       for (var record in historyProvider.historyRecords) {
@@ -220,10 +216,8 @@ class _HistoryPageState extends State<HistoryPage> {
 
                       return RefreshIndicator(
                         onRefresh: _refreshHistory,
-                        color: Colors.white, // Cor do indicador de carregamento
-                        backgroundColor: const Color(
-                          0xFF3C5DB7,
-                        ), // Cor de fundo do indicador
+                        color: const Color.fromARGB(255, 82, 97, 146),
+                        backgroundColor: Colors.white,
                         child: ListView.builder(
                           itemCount: sortedKeys.length,
                           itemBuilder: (context, index) {
@@ -300,8 +294,8 @@ class _HistoryPageState extends State<HistoryPage> {
                                               )
                                             else
                                               Container(
-                                                width: 120,
-                                                height: 70,
+                                                width: 180,
+                                                height: 100,
                                                 decoration: BoxDecoration(
                                                   color: Colors.grey[700],
                                                   borderRadius:

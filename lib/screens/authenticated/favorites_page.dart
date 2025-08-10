@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:starsoul_app/models/history_record.dart';
 import 'package:starsoul_app/services/favorites_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
@@ -93,8 +94,82 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Consumer<FavoritesProvider>(
       builder: (context, favoritesProvider, child) {
         if (favoritesProvider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.white),
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[700]!,
+            highlightColor: Colors.grey[500]!,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+
+                Container(
+                  height: 18,
+                  width: 160,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[700],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 180,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[700],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 16,
+                                  width: 160,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[700],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                const SizedBox(height: 7),
+                                Container(
+                                  height: 16,
+                                  width: 160,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[700],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                const SizedBox(height: 7),
+                                Container(
+                                  height: 16,
+                                  width: 110,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[700],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
         } else if (favoritesProvider.errorMessage != null) {
           return Center(
@@ -148,13 +223,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
               'Últimos 30 dias': 3,
               'Mais Antigo': 4,
             };
-            return (order[a] ?? 99).compareTo(
-              order[b] ?? 99,
-            ); // Usa 99 para rótulos desconhecidos
+            return (order[a] ?? 99).compareTo(order[b] ?? 99);
           });
 
           return ListView.builder(
-            itemCount: sortedKeys.length + 1, // Add 1 for the extra text
+            itemCount: sortedKeys.length + 1,
             itemBuilder: (context, index) {
               if (index < sortedKeys.length) {
                 final groupLabel = sortedKeys[index];
@@ -176,154 +249,147 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ),
                     Column(
                       children:
-                      recordsInGroup.map((record) {
-                        final content = record.conteudo;
-                        final thumbnailUrl = getYoutubeThumbnail(content.url);
-                        final String customUrl =
-                            'https://starsoul.netlify.app/app/content/${content.id}';
-
-                        return GestureDetector(
-                          onTap:
-                              () => _launchURL(
-                                customUrl,
-                              ), // Abre a URL do conteúdo
-                          child: Card(
-                            color: Colors.white.withOpacity(
-                              0.1,
-                            ), // Cor de fundo do Card
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 6.0,
-                            ), // Margem entre os Cards, aumentei um pouco
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16.0),
-                              child: Container(
-                                color: const Color.fromARGB(24, 0, 0, 0),
-                                padding: const EdgeInsets.all(0.0),
-                                child: Row(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
-                                    Stack(
+                          recordsInGroup.map((record) {
+                            final content = record.conteudo;
+                            final thumbnailUrl = getYoutubeThumbnail(
+                              content.url,
+                            );
+                            final String customUrl =
+                                'https://starsoul.netlify.app/app/content/${content.id}';
+                            return GestureDetector(
+                              onTap: () => _launchURL(customUrl),
+                              child: Card(
+                                color: Colors.white.withOpacity(0.1),
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 6.0,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  child: Container(
+                                    color: const Color.fromARGB(24, 0, 0, 0),
+                                    padding: const EdgeInsets.all(0.0),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            0.0,
-                                          ),
-                                          child:
-                                          thumbnailUrl != null
-                                              ? Image.network(
-                                            thumbnailUrl,
-                                            width: 180,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (
-                                                context,
-                                                error,
-                                                stackTrace,
-                                                ) =>
-                                            const Icon(
-                                              Icons.broken_image,
-                                              color: Colors.grey,
-                                              size: 80,
-                                            ), // Ícone maior em caso de erro
-                                          )
-                                              : Container(
-                                            // Placeholder se não houver miniatura
-                                            width: 180,
-                                            height: 100,
-                                            color: Colors.black54,
-                                            child: const Icon(
-                                              Icons.play_circle_fill,
-                                              color: Colors.white70,
-                                              size: 60,
+                                        Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(0.0),
+                                              child:
+                                                  thumbnailUrl != null
+                                                      ? Image.network(
+                                                        thumbnailUrl,
+                                                        width: 180,
+                                                        height: 100,
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder:
+                                                            (
+                                                              context,
+                                                              error,
+                                                              stackTrace,
+                                                            ) => const Icon(
+                                                              Icons
+                                                                  .broken_image,
+                                                              color:
+                                                                  Colors.grey,
+                                                              size: 80,
+                                                            ),
+                                                      )
+                                                      : Container(
+                                                        width: 180,
+                                                        height: 100,
+                                                        color: Colors.black54,
+                                                        child: const Icon(
+                                                          Icons
+                                                              .play_circle_fill,
+                                                          color: Colors.white70,
+                                                          size: 60,
+                                                        ),
+                                                      ),
                                             ),
-                                          ),
+                                            Positioned(
+                                              top: 2,
+                                              left: 2,
+                                              child: Container(
+                                                width: 35,
+                                                height: 35,
+                                                padding: EdgeInsets.zero,
+                                                decoration: const BoxDecoration(
+                                                  color: Color.fromARGB(
+                                                    40,
+                                                    0,
+                                                    0,
+                                                    0,
+                                                  ),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                  icon: Icon(
+                                                    record.favoritado
+                                                        ? Icons.favorite
+                                                        : Icons.favorite_border,
+                                                    color: Colors.red,
+                                                    size: 22,
+                                                  ),
+                                                  onPressed: () {
+                                                    final userToken =
+                                                        Provider.of<
+                                                          UserProvider
+                                                        >(
+                                                          context,
+                                                          listen: false,
+                                                        ).userToken;
+                                                    if (userToken != null) {
+                                                      favoritesProvider
+                                                          .toggleFavorite(
+                                                            userToken,
+                                                            content.id,
+                                                            record.favoritado,
+                                                          );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Positioned(
-                                          top:
-                                          2, // Ajuste para posicionar conforme a imagem de referência
-                                          left: 2,
-                                          child: Container(
-                                            width:
-                                            35, // <-- Tamanho fixo para o círculo preto (largura)
-                                            height: 35,
-                                            padding: EdgeInsets.zero,
-                                            decoration: const BoxDecoration(
-                                              color: Color.fromARGB(
-                                                40,
-                                                0,
-                                                0,
-                                                0,
-                                              ),
-                                              shape: BoxShape.circle,
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0,
+                                              vertical: 8.0,
                                             ),
-                                            child: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              constraints:
-                                              const BoxConstraints(),
-                                              icon: Icon(
-                                                record.favoritado
-                                                    ? Icons.favorite
-                                                    : Icons
-                                                    .favorite_border,
-                                                color: Colors.red,
-                                                size: 22,
-                                              ),
-                                              onPressed: () {
-                                                final userToken =
-                                                    Provider.of<UserProvider>(
-                                                      context,
-                                                      listen: false,
-                                                    ).userToken;
-                                                if (userToken != null) {
-                                                  favoritesProvider
-                                                      .toggleFavorite(
-                                                    userToken,
-                                                    content
-                                                        .id, // ID do CONTEÚDO
-                                                    record
-                                                        .favoritado, // Estado atual
-                                                  );
-                                                }
-                                              },
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  content.titulo,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                  maxLines: 3,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0, vertical: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment
-                                              .center, // Alinha horizontalmente ao centro
-                                          children: [
-                                            Text(
-                                              content.titulo,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                              ),
-                                              maxLines: 3,
-                                              overflow:
-                                              TextOverflow.ellipsis,
-                                              // textAlign: TextAlign.center, // Removido para alinhar à esquerda
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                            );
+                          }).toList(),
                     ),
                   ],
                 );
@@ -331,39 +397,55 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Stack(
-                    alignment: Alignment.center, 
+                    alignment: Alignment.center,
                     children: [
                       Positioned(
                         top: 0,
                         left: 20,
-                        child: Icon(Icons.star_rounded, color: Colors.white.withOpacity(0.4), size: 20),
+                        child: Icon(
+                          Icons.star_rounded,
+                          color: Colors.white.withOpacity(0.4),
+                          size: 20,
+                        ),
                       ),
                       Positioned(
                         top: 10,
                         right: 30,
-                        child: Icon(Icons.star_rounded, color: Colors.white.withOpacity(0.2), size: 14),
+                        child: Icon(
+                          Icons.star_rounded,
+                          color: Colors.white.withOpacity(0.2),
+                          size: 14,
+                        ),
                       ),
                       Positioned(
                         bottom: 10,
                         left: 30,
-                        child: Icon(Icons.brightness_1_sharp , color: Colors.white.withOpacity(0.3), size: 7),
+                        child: Icon(
+                          Icons.brightness_1_sharp,
+                          color: Colors.white.withOpacity(0.3),
+                          size: 7,
+                        ),
                       ),
                       Positioned(
                         bottom: 0,
                         right: 70,
-                        child: Icon(Icons.star_rounded, color: Colors.white.withOpacity(0.5), size: 18),
+                        child: Icon(
+                          Icons.star_rounded,
+                          color: Colors.white.withOpacity(0.5),
+                          size: 18,
+                        ),
                       ),
-                      Column( 
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 16.0), // Espaçamento antes do texto
+                          const SizedBox(height: 16.0),
                           const Text(
-                            'Você favoritou apenas esses itens acima', // Seu texto
-                            textAlign: TextAlign.center, // Centraliza o texto horizontalmente
+                            'Você favoritou apenas esses itens acima',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white70, // Cor cinza claro para o texto
-                              fontSize: 12, // Tamanho da fonte (aumentei para 16, estava 12)
-                              fontWeight: FontWeight.w400, // Peso da fonte
+                              color: Colors.white70,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           const SizedBox(height: 16.0),

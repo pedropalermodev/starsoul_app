@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:starsoul_app/main_page.dart';
 import 'package:starsoul_app/screens/authenticated/history_page.dart';
 import 'package:starsoul_app/screens/authenticated/personalInfo_page.dart';
+import 'package:starsoul_app/services/content_provider.dart';
 import 'package:starsoul_app/services/daily_provider.dart';
 import 'package:starsoul_app/services/favorites_provider.dart';
 import 'package:starsoul_app/services/history_provider.dart';
@@ -16,6 +17,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ContentProvider()),
         ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => FavoritesProvider()),
         ChangeNotifierProvider(create: (_) => DailyProvider()),

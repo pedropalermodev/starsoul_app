@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:starsoul_app/models/content_preview.dart';
 
 class Content {
   final int id;
@@ -41,20 +44,51 @@ class Content {
 }
 
 class ContentProvider with ChangeNotifier {
-  List<Content> _contents = [];
+  List<ContentPreview> _contentsPreview = [];
   bool _isLoading = false;
   String? _errorMessage;
 
-  List<Content> get contents => _contents;
+  List<ContentPreview> get contentsPreview => _contentsPreview;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadContents() async {
+  List<ContentPreview> get motivationalPhrases {
+    return _contentsPreview.where((content) {
+      final hasTag = content.tags.contains('Frases motivacionais');
+      final isActive = content.codStatus == 'Ativo';
+      final isTextFormat = content.formato == 'Texto';
+      return isActive && isTextFormat && hasTag;
+    }).toList();
+  }
+
+  List<ContentPreview> get spotifySongs {
+    return _contentsPreview.where((content) {
+      final isActive = content.codStatus == 'Ativo';
+      final isTextFormat = content.formato == 'Audio';
+      return isActive && isTextFormat;
+    }).toList();
+  }
+
+  Future<void> loadContents({ bool forceRefresh = false, }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+
+      if (!forceRefresh) {
+        final cacheContents = prefs.getString('contents_cache');
+        if (cacheContents != null) {
+          final List<dynamic> jsonList = json.decode(cacheContents);
+          _contentsPreview = jsonList.map((json) => ContentPreview.fromJson(json)).toList();
+          print('Conteúdos carregado do cache! Total: ${_contentsPreview.length}');
+          _isLoading = false;
+          notifyListeners();
+          return;
+        }
+      }
+      
       var url = Uri.parse(
         'https://starsoul-backend.onrender.com/api/conteudos/findAll',
       );
@@ -65,8 +99,12 @@ class ContentProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
-        _contents = jsonList.map((json) => Content.fromJson(json)).toList();
-        print('Conteúdos carregados com sucesso! Total: ${_contents.length}');
+        _contentsPreview = jsonList.map((json) => ContentPreview.fromJson(json)).toList();
+        print('Conteúdos carregados da API e salvo no cache! Total: ${_contentsPreview.length}');
+
+        // Salva no cache
+        await prefs.setString('contents_cache', json.encode(jsonList));
+
       } else {
         _errorMessage =
             'Erro ao carregar conteúdos: Status ${response.statusCode} - ${response.body}';
@@ -81,3 +119,9 @@ class ContentProvider with ChangeNotifier {
     }
   }
 }
+
+void clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('contents_cache');
+    print('Cache do conteúdo limpo.');
+  }

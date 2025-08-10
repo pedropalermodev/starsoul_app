@@ -98,14 +98,13 @@ class UserProvider with ChangeNotifier {
           );
           await _clearUserDataAndLogout(
             prefs,
-          ); // Pode ser um erro, então desloga
+          );
         }
       } catch (e) {
         print('Erro na requisição ou decodificação do token/API: $e');
         await _clearUserDataAndLogout(prefs);
       }
     } else {
-      // Nenhum token encontrado nas SharedPreferences
       await _clearUserDataAndLogout(prefs);
     }
   }
@@ -161,7 +160,6 @@ class UserProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final Map<String, dynamic> updatedUserData = json.decode(response.body);
 
-        // Atualiza as variáveis de estado locais com os novos dados
         _userName = updatedUserData['nome'];
         _userEmail = updatedUserData['email'];
         _userNickname = updatedUserData['apelido'];

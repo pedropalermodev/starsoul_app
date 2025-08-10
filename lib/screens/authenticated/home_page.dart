@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:starsoul_app/services/content_provider.dart';
 import 'package:starsoul_app/services/history_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
+import 'package:starsoul_app/widgets/motivational_box.dart';
+import 'package:starsoul_app/widgets/spotify_songs_box.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +28,8 @@ class _HomePageState extends State<HomePage> {
           listen: false,
         ).loadHistory(userToken);
       }
+
+      Provider.of<ContentProvider>(context, listen: false).loadContents();
     });
   }
 
@@ -108,8 +114,42 @@ class _HomePageState extends State<HomePage> {
           child: Consumer<HistoryProvider>(
             builder: (context, historyProvider, child) {
               if (historyProvider.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                return SizedBox(
+                  height: 130,
+                  child: Shimmer.fromColors(
+                    baseColor: Colors.grey[500]!,
+                    highlightColor: Colors.grey[600]!,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 2,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: 170,
+                          margin: EdgeInsets.only(right: index == 1 ? 0 : 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 95,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[600],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                height: 16,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[600],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 );
               } else if (historyProvider.errorMessage != null) {
                 return Center(
@@ -122,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                 return const Center(
                   child: Text(
                     'Nenhum histórico de visualização recente.',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
                   ),
                 );
               } else {
@@ -147,9 +187,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             if (thumbnailUrl != null)
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  8.0,
-                                ),
+                                borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
                                   thumbnailUrl,
                                   width: 170,
@@ -164,11 +202,20 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               )
                             else
-                              const Icon(
-                                Icons.play_circle_fill,
-                                color: Colors.white70,
-                                size: 40,
+                              Container(
+                                width: 170,
+                                height: 95,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[800],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.play_circle_fill,
+                                  color: Colors.white70,
+                                  size: 40,
+                                ),
                               ),
+
                             const SizedBox(height: 4),
                             Text(
                               content.titulo,
@@ -189,6 +236,29 @@ class _HomePageState extends State<HomePage> {
               }
             },
           ),
+        ),
+
+        const SizedBox(height: 8),
+
+        Container(
+          height: 80,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 33, 58, 102),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(child: const MotivationalPhraseWidget()),
+        ),
+
+        const SizedBox(height: 18),
+
+        const Text(
+          'Nossa curadoria especial de playlists para você.',
+          style: TextStyle(color: Colors.white),
+        ),
+
+        Column(
+          children: [const SizedBox(height: 10), const SpotifySongsWidget()],
         ),
       ],
     );

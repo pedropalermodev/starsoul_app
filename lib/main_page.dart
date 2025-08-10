@@ -59,27 +59,6 @@ class _MainPageState extends State<MainPage> {
     ];
   }
 
-  Future<void> _handleRefresh() async {
-    setState(() {
-      // Aqui você pode atualizar dados, recarregar a tela, etc.
-    });
-    await Future.delayed(const Duration(milliseconds: 300));
-  }
-
-  Widget _buildRefreshablePage(Widget child) {
-    return RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: CustomScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: [
-          SliverFillRemaining(
-            child: child,
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<bool?> _showConfirmLogoutDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,
@@ -124,7 +103,7 @@ class _MainPageState extends State<MainPage> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: _buildRefreshablePage(pages[currentIndex]),
+          child: (pages[currentIndex]),
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(

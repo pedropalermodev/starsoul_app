@@ -21,28 +21,36 @@ class ContentPreview {
     required this.tags,
   });
 
-  factory ContentPreview.fromJson(Map<String, dynamic> json) {
-    List<String> parsedCategories = [];
-    if (json['categorias'] is List) {
-      if (json['categorias'].isNotEmpty && json['categorias'][0] is String) {
-        parsedCategories = List<String>.from(json['categorias']);
-      } else if (json['categorias'].isNotEmpty &&
-          json['categorias'][0] is Map) {
-        parsedCategories =
-            (json['categorias'] as List)
-                .map((catJson) => catJson['categoria']['nome'] as String)
-                .toList();
+  // Função auxiliar estática para parse flexível de listas
+  static List<String> parseStringOrMapList(dynamic jsonList, {String? key1, String? key2}) {
+    if (jsonList == null) return [];
+
+    if (jsonList is List) {
+      if (jsonList.isEmpty) return [];
+
+      if (jsonList.first is String) {
+        // Lista simples de strings
+        return List<String>.from(jsonList);
+      }
+
+      if (jsonList.first is Map<String, dynamic>) {
+        // Lista de mapas, extrai o valor usando as chaves passadas
+        return jsonList.map<String>((item) {
+          if (key1 != null && key2 != null) {
+            return item[key1]?[key2] as String? ?? '';
+          } else if (key1 != null) {
+            return item[key1] as String? ?? '';
+          }
+          // Se não souber as chaves, pega a primeira string que encontrar
+          return item.values.firstWhere((v) => v is String, orElse: () => '') as String;
+        }).where((e) => e.isNotEmpty).toList();
       }
     }
 
-    List<String> parsedTags = [];
-    if (json['tags'] is List) {
-      parsedTags =
-          (json['tags'] as List)
-              .map((tagJson) => tagJson['tag']['nome'] as String)
-              .toList();
-    }
+    return [];
+  }
 
+  factory ContentPreview.fromJson(Map<String, dynamic> json) {
     return ContentPreview(
       id: json['id'] as int,
       titulo: json['titulo'] as String,
@@ -51,8 +59,8 @@ class ContentPreview {
       formato: json['formato'] as String,
       url: json['url'] as String,
       dataPublicacao: DateTime.parse(json['dataPublicacao'] as String),
-      categorias: parsedCategories,
-      tags: parsedTags,
+      categorias: parseStringOrMapList(json['categorias']),
+      tags: parseStringOrMapList(json['tags'], key1: 'tag', key2: 'nome'),
     );
   }
 }
