@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starsoul_app/services/daily_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
-import 'package:starsoul_app/widgets/mood_selector.dart'; // <--- ADICIONE ESTA LINHA
-
-// Certifique-se de que a classe Annotation está acessível.
-// Se estiver em um arquivo separado, importe-o:
-// import 'package:starsoul_app/services/daily_provider.dart'; // Ou o caminho correto para Annotation
+import 'package:starsoul_app/widgets/mood_selector.dart';
 
 class AnnotationDailyPage extends StatefulWidget {
   const AnnotationDailyPage({super.key});
@@ -67,6 +63,7 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
             ),
           ),
         );
+        Navigator.of(context).pop(false);
         return;
       }
 
@@ -79,36 +76,53 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
       );
 
       try {
-        await Provider.of<DailyProvider>(
+        final dailyProvider = Provider.of<DailyProvider>(
           context,
           listen: false,
-        ).createAnnotation(newAnnotation, userToken);
+        );
 
-        if (Provider.of<DailyProvider>(context, listen: false).errorMessage ==
-            null) {
+        final createdNote = await dailyProvider.createAnnotation(
+          newAnnotation,
+          userToken,
+        );
+
+        if (createdNote != null) {
           _clearFields();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Anotação criada com sucesso!')),
-          );
-          // --- Volta para a página anterior após o sucesso ---
-          Navigator.of(context).pop();
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                Provider.of<DailyProvider>(
-                  context,
-                  listen: false,
-                ).errorMessage!,
+              content: Row(
+                children: const [
+                  Icon(Icons.check_circle_outline, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text(
+                    'Anotação criada com sucesso!',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
               ),
+              backgroundColor: Colors.indigo.shade300,
+              duration: const Duration(seconds: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              behavior: SnackBarBehavior.floating,
             ),
           );
+          Navigator.of(context).pop(true);
+        } else {
+          // Se a criação falhou, exibe o erro
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(dailyProvider.errorMessage!)));
+          // Retorna 'false' para indicar falha
+          Navigator.of(context).pop(false);
         }
       } catch (e) {
         print('Exceção inesperada ao enviar anotação: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro de conexão: ${e.toString()}')),
         );
+        Navigator.of(context).pop(false);
       } finally {
         setState(() {
           _isLoading = false;
@@ -126,7 +140,7 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
         backgroundColor: const Color(0xFF2B4384),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(false),
           padding: const EdgeInsets.only(top: 25, left: 5),
         ),
         title: Container(

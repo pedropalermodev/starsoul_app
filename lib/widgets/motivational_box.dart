@@ -96,17 +96,31 @@ class _MotivationalPhraseWidgetState extends State<MotivationalPhraseWidget> {
       height: 80,
       child: Center(
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(seconds: 1),
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
           transitionBuilder: (Widget child, Animation<double> animation) {
-            return FadeTransition(opacity: animation, child: child);
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            );
+
+            final slideAnimation = Tween<Offset>(
+              begin: const Offset(0, 0.2),
+              end: Offset.zero,
+            ).animate(curvedAnimation);
+
+            return FadeTransition(
+              opacity: curvedAnimation,
+              child: SlideTransition(position: slideAnimation, child: child),
+            );
           },
+
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               phraseWithQuotes,
-              key: ValueKey<String>(
-                phraseWithQuotes,
-              ),
+              key: ValueKey<String>(phraseWithQuotes),
               style: const TextStyle(fontSize: 14, color: Colors.white),
               textAlign: TextAlign.center,
             ),
