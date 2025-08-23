@@ -254,8 +254,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             final thumbnailUrl = getYoutubeThumbnail(
                               content.url,
                             );
-                            final String customUrl =
-                                'https://starsoul.netlify.app/app/content/${content.id}';
+                            final userToken = Provider.of<UserProvider>(context, listen: false).userToken;
+                            final String customUrl = 'https://starsoul.netlify.app/app/content/${content.id}?authToken=$userToken';
                             return GestureDetector(
                               onTap: () => _launchURL(customUrl),
                               child: Card(

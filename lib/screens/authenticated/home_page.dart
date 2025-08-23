@@ -173,8 +173,8 @@ class _HomePageState extends State<HomePage> {
                     final record = historyProvider.historyRecords[index];
                     final content = record.conteudo;
                     final thumbnailUrl = getYoutubeThumbnail(content.url);
-                    final String customUrl =
-                        'https://starsoul.netlify.app/app/content/${content.id}';
+                    final token = userProvider.userToken;
+                    final String customUrl = 'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
 
                     return GestureDetector(
                       onTap: () => _launchURL(customUrl),

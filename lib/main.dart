@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         // '/personal-info': (context) => const PersonalInfoPage(),
         // '/history': (context) => const HistoryPage(),
       },
-      theme: ThemeData(fontFamily: 'Poppins'),
+      theme: ThemeData(fontFamily: 'Poppins', scaffoldBackgroundColor: Colors.transparent,),
     );
   }
 }

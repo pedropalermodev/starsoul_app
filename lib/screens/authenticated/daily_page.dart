@@ -18,13 +18,14 @@ class _DailyPageState extends State<DailyPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadNotes(); 
+      _loadNotes();
     });
   }
 
   void _loadNotes({bool forceApiCall = false}) {
     final dailyProvider = Provider.of<DailyProvider>(context, listen: false);
-    final userToken = Provider.of<UserProvider>(context, listen: false).userToken;
+    final userToken =
+        Provider.of<UserProvider>(context, listen: false).userToken;
     if (userToken != null) {
       dailyProvider.loadNotes(userToken, forceApiCall: forceApiCall);
     }
@@ -61,46 +62,13 @@ class _DailyPageState extends State<DailyPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF3C5DB7), Color(0xFF1A2951)],
-        ),
-      ),
+      height: double.infinity,
+      width: double.infinity,
       child: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(top: 10.0, bottom: 20.0), // Ajuste conforme necessário
-              //       child: ElevatedButton(
-              //         onPressed: () async {
-              //           await Navigator.of(context).push(
-              //             MaterialPageRoute(
-              //               builder: (context) => const AnnotationDailyPage(),
-              //             ),
-              //           );
-              //           _loadNotes();
-              //         },
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor: const Color(0xFF1A2951),
-              //         ),
-              //         child: const Text(
-              //           'Adicionar nova anotação',
-              //           style: TextStyle(color: Colors.white),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-
-              // Removido o SizedBox extra aqui se o Padding do botão acima for suficiente.
-              // const SizedBox(height: 20,),
               Expanded(
                 child: Builder(
                   builder: (scaffoldMessengerContext) {
@@ -160,6 +128,7 @@ class _DailyPageState extends State<DailyPage> {
                         }
 
                         return ListView.separated(
+                          padding: const EdgeInsets.only(bottom: 140),
                           itemCount: dailyProvider.notes.length,
                           separatorBuilder:
                               (context, index) => const SizedBox(height: 8),
@@ -355,11 +324,11 @@ class _DailyPageState extends State<DailyPage> {
               ),
             ],
           ),
-
           Positioned(
-            bottom: 0,
+            bottom: 140,
             right: 0,
             child: FloatingActionButton(
+              mini: true, // menor tamanho se quiser
               onPressed: () async {
                 final result = await Navigator.of(context).push(
                   MaterialPageRoute(
@@ -370,14 +339,10 @@ class _DailyPageState extends State<DailyPage> {
                   _loadNotes(forceApiCall: true);
                 }
               },
-              // onPressed: () async {
-              //   final dailyProvider = Provider.of<DailyProvider>(context, listen: false);
-              //   await dailyProvider.clearCache();
-              // },
-              backgroundColor: const Color(0xFF3C5DB7),
+              backgroundColor: const Color.fromARGB(255, 118, 128, 223),
               foregroundColor: Colors.white,
-              child: const Icon(Icons.add),
-              tooltip: 'Adicionar Anotação',
+              child: const Icon(Icons.add), // ícone diferente
+              tooltip: 'Botão do topo',
             ),
           ),
         ],

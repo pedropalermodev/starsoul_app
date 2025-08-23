@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:starsoul_app/main_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final List<Widget>? actions;
   final double height;
   final bool showLogo;
+  final int? currentIndex;
 
   const CustomAppBar({
     super.key,
@@ -12,12 +14,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.height = 80,
     this.showLogo = false,
+    this.currentIndex,
   });
 
   @override
   Widget build(BuildContext context) {
+
+    final Color backgroundColor =
+        currentIndex == 3 ? const Color(0xFF1A237E) : const Color(0xFF3C5DB7);
+
     return AppBar(
-      backgroundColor: const Color(0xFF3C5DB7),
+      backgroundColor: backgroundColor,
       elevation: 0,
       centerTitle: showLogo,
       title:
@@ -33,9 +40,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? Padding(
                 padding: const EdgeInsets.only(top: 25, left: 5),
                 child: Text(
-                  title!,
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
-                ),
+                    title!,
+                    style: TextStyle(
+                        color: currentIndex == 3 ? Colors.black : Colors.white,
+                        fontSize: 18),
+                  ),
               )
               : null,
       actions:

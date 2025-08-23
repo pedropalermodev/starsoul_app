@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:starsoul_app/main_page.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -12,12 +13,13 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       height: 145,
       padding: const EdgeInsets.only(bottom: 8),
-      color: const Color(0xFF1A2951),
+      color:
+          currentIndex == 3 ? const Color(0xFF1A237E) : const Color(0xFF1A2951),
+
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -28,7 +30,10 @@ class CustomBottomNavBar extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               height: 90,
-              color: const Color(0xFF1A2951),
+              color:
+                  currentIndex == 3
+                      ? const Color(0xFF1A237E)
+                      : const Color(0xFF1A2951),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
