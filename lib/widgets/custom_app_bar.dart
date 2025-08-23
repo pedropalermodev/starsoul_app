@@ -21,7 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
 
     final Color backgroundColor =
-        currentIndex == 3 ? const Color(0xFF1A237E) : const Color(0xFF3C5DB7);
+        currentIndex == 3 ? const Color(0xFF233A66) : const Color(0xFF3C5DB7);
 
     return AppBar(
       backgroundColor: backgroundColor,

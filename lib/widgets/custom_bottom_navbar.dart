@@ -18,7 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
       height: 145,
       padding: const EdgeInsets.only(bottom: 8),
       color:
-          currentIndex == 3 ? const Color(0xFF1A237E) : const Color(0xFF1A2951),
+          currentIndex == 3 ? const Color(0xFF233A66) : const Color(0xFF1A2951),
 
       child: Stack(
         alignment: Alignment.topCenter,
@@ -32,7 +32,7 @@ class CustomBottomNavBar extends StatelessWidget {
               height: 90,
               color:
                   currentIndex == 3
-                      ? const Color(0xFF1A237E)
+                      ? const Color(0xFF233A66)
                       : const Color(0xFF1A2951),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starsoul_app/screens/authenticated/daily_page.dart';
 import 'package:starsoul_app/screens/authenticated/favorites_page.dart';
 import 'package:starsoul_app/screens/authenticated/home_page.dart';
@@ -110,18 +111,29 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
   Future<bool?> _showConfirmLogoutDialog(BuildContext context) async {
     return showDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('Confirmar Saída'),
+          title: const Text(
+            'Confirmar Saída',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: const Text('Tem certeza de que deseja sair da sua conta?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancelar'),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
-            TextButton(
+            ElevatedButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text('Sair'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Sair', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -138,11 +150,11 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor =
-        currentIndex == 3 ? const Color(0xFF1A237E) : Colors.transparent;
+        currentIndex == 3 ? const Color(0xFF233A66) : Colors.transparent;
 
     final BoxDecoration backgroundDecoration =
         currentIndex == 3
-            ? const BoxDecoration(color: Color(0xFF1A237E))
+            ? const BoxDecoration(color: Color(0xFF233A66))
             : const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -174,6 +186,7 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
                       context,
                     );
                     if (shouldLogout == true) {
+                      await clearAllCache();
                       final userProvider = Provider.of<UserProvider>(
                         context,
                         listen: false,
@@ -193,26 +206,21 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
       appBar: currentAppBar,
       body: Container(
         width: double.infinity,
-        height: double.infinity,
         decoration: backgroundDecoration,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: RefreshIndicator(
-            color: const Color.fromARGB(255, 37, 43, 97),
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-            onRefresh: _refreshAllProviders,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height:
-                    MediaQuery.of(context).size.height -
-                    kToolbarHeight -
-                    kBottomNavigationBarHeight,
-                child: pages[currentIndex],
-              ),
-            ),
-          ),
-        ),
+        child:
+            currentIndex == 3
+                ? pages[currentIndex] // sem refresh e sem padding
+                : RefreshIndicator(
+                  strokeWidth: 2.5,
+                  displacement: 30,
+                  color: const Color.fromARGB(255, 37, 43, 97),
+                  backgroundColor: Colors.white,
+                  onRefresh: _refreshAllProviders,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: pages[currentIndex],
+                  ),
+                ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: currentIndex,
@@ -220,4 +228,13 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
       ),
     );
   }
+}
+
+Future<void> clearAllCache() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('contents_cache');
+  await prefs.remove('cached_notes');
+  await prefs.remove('history_cache');
+  await prefs.remove('favorites_cache');
+  print('Todos os caches foram limpos com sucesso!');
 }

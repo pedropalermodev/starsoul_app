@@ -128,7 +128,7 @@ class _DailyPageState extends State<DailyPage> {
                         }
 
                         return ListView.separated(
-                          padding: const EdgeInsets.only(bottom: 140),
+                          padding: const EdgeInsets.only(bottom: 5),
                           itemCount: dailyProvider.notes.length,
                           separatorBuilder:
                               (context, index) => const SizedBox(height: 8),
@@ -325,10 +325,9 @@ class _DailyPageState extends State<DailyPage> {
             ],
           ),
           Positioned(
-            bottom: 140,
+            bottom: 0,
             right: 0,
             child: FloatingActionButton(
-              mini: true, // menor tamanho se quiser
               onPressed: () async {
                 final result = await Navigator.of(context).push(
                   MaterialPageRoute(
