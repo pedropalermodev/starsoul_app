@@ -52,7 +52,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   const SizedBox(width: 32), // Espaço para o botão central
                   navItem(
                     index: 3,
-                    label: 'Dicas',
+                    label: 'Inspirações',
                     iconPath: 'assets/navbar/tips-unselect.png',
                     activeIconPath: 'assets/navbar/tips-select.png',
                   ),
