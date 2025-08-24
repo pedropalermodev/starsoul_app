@@ -246,7 +246,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: recordsInGroup.length,
                                   itemBuilder: (context, itemIndex) {
-                                    final record = recordsInGroup[itemIndex];
+                                    final record = recordsInGroup.reversed.toList()[itemIndex];
                                     final content = record.conteudo;
                                     final thumbnailUrl = getYoutubeThumbnail(
                                       content.url,

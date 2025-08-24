@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: historyProvider.historyRecords.length,
                   itemBuilder: (context, index) {
-                    final record = historyProvider.historyRecords[index];
+                    final record = historyProvider.historyRecords.reversed.toList()[index];
                     final content = record.conteudo;
                     final thumbnailUrl = getYoutubeThumbnail(content.url);
                     final token = userProvider.userToken;
