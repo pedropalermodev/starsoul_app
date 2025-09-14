@@ -202,7 +202,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
           return const Center(
             child: Text(
               'Nenhum item favorito encontrado.',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 13,
+                color: Colors.white,
+              ),
             ),
           );
         } else {
@@ -254,8 +258,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             final thumbnailUrl = getYoutubeThumbnail(
                               content.url,
                             );
-                            final userToken = Provider.of<UserProvider>(context, listen: false).userToken;
-                            final String customUrl = 'https://starsoul.netlify.app/app/content/${content.id}?authToken=$userToken';
+                            final userToken =
+                                Provider.of<UserProvider>(
+                                  context,
+                                  listen: false,
+                                ).userToken;
+                            final String customUrl =
+                                'https://starsoul.netlify.app/app/content/${content.id}?authToken=$userToken';
                             return GestureDetector(
                               onTap: () => _launchURL(customUrl),
                               child: Card(

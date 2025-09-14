@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:starsoul_app/services/content_provider.dart';
 import 'package:starsoul_app/services/history_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
+import 'package:starsoul_app/widgets/banner_widget.dart';
 import 'package:starsoul_app/widgets/motivational_box.dart';
 import 'package:starsoul_app/widgets/spotify_songs_box.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -80,8 +81,6 @@ class _HomePageState extends State<HomePage> {
     }
     return null;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +163,11 @@ class _HomePageState extends State<HomePage> {
                 return const Center(
                   child: Text(
                     'Nenhum histórico de visualização recente.',
-                    style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 13,
+                      color: Colors.white,
+                    ),
                   ),
                 );
               } else {
@@ -172,11 +175,13 @@ class _HomePageState extends State<HomePage> {
                   scrollDirection: Axis.horizontal,
                   itemCount: historyProvider.historyRecords.length,
                   itemBuilder: (context, index) {
-                    final record = historyProvider.historyRecords.reversed.toList()[index];
+                    final record =
+                        historyProvider.historyRecords.reversed.toList()[index];
                     final content = record.conteudo;
                     final thumbnailUrl = getYoutubeThumbnail(content.url);
                     final token = userProvider.userToken;
-                    final String customUrl = 'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
+                    final String customUrl =
+                        'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
 
                     return GestureDetector(
                       onTap: () => _launchURL(customUrl),
@@ -240,7 +245,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
 
-        const SizedBox(height: 8),
+        const SizedBox(height: 5),
 
         Container(
           height: 80,
@@ -252,7 +257,7 @@ class _HomePageState extends State<HomePage> {
           child: Center(child: const MotivationalPhraseWidget()),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 15),
 
         const Text(
           'Nossa curadoria especial de playlists para você.',
@@ -261,6 +266,13 @@ class _HomePageState extends State<HomePage> {
 
         Column(
           children: [const SizedBox(height: 10), const SpotifySongsWidget()],
+        ),
+
+        const SizedBox(height: 5),
+
+        BannerWidget(
+          assetPath: "assets/banner/banner1.png",
+          linkUrl: "https://chat.whatsapp.com/J6zH2F8siTL3rhikL1kz0L",
         ),
       ],
     );

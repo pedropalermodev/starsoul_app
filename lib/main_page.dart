@@ -7,6 +7,7 @@ import 'package:starsoul_app/screens/authenticated/home_page.dart';
 import 'package:starsoul_app/screens/authenticated/meditation_tips_page.dart';
 import 'package:starsoul_app/screens/authenticated/settings_page.dart';
 import 'package:starsoul_app/services/content_provider.dart';
+import 'package:starsoul_app/services/daily_provider.dart';
 import 'package:starsoul_app/services/favorites_provider.dart';
 import 'package:starsoul_app/services/history_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
@@ -95,6 +96,10 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
       context,
       listen: false,
     );
+    final dailyProvider = Provider.of<DailyProvider>(
+      context,
+      listen: false,
+    );
 
     final token = userProvider.userToken;
 
@@ -103,10 +108,12 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
         userProvider.loadUserFromToken(),
         historyProvider.loadHistory(token, forceRefresh: true),
         contentProvider.loadContents(forceRefresh: true),
+        dailyProvider.loadNotes(token, forceApiCall: true),
         favoritesProvider.loadFavorites(token, forceRefresh: true),
       ]);
     }
   }
+  
 
   Future<bool?> _showConfirmLogoutDialog(BuildContext context) async {
     return showDialog<bool>(
@@ -116,11 +123,11 @@ class MainPageState extends State<MainPage> with WidgetsBindingObserver {
         return AlertDialog(
           title: const Text(
             'Confirmar Saída',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.w400),
           ),
           content: const Text('Tem certeza de que deseja sair da sua conta?'),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
           actions: <Widget>[
             TextButton(

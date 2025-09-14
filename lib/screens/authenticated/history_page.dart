@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:starsoul_app/models/history_record.dart';
 import 'package:starsoul_app/services/history_provider.dart';
@@ -125,6 +126,45 @@ class _HistoryPageState extends State<HistoryPage> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
         ),
+        // actions: [
+        //   IconButton(
+        //     padding: const EdgeInsets.only(top: 22.0, right: 5.0),
+        //     icon: const Icon(Icons.delete, color: Colors.white),
+        //     onPressed: () async {
+        //       final confirm = await showDialog<bool>(
+        //         context: context,
+        //         builder:
+        //             (context) => AlertDialog(
+        //               title: const Text('Confirmar exclusão'),
+        //               content: const Text(
+        //                 'Deseja realmente apagar todo o histórico?',
+        //               ),
+        //               actions: [
+        //                 TextButton(
+        //                   onPressed: () => Navigator.of(context).pop(false),
+        //                   child: const Text('Cancelar'),
+        //                 ),
+        //                 TextButton(
+        //                   onPressed: () => Navigator.of(context).pop(true),
+        //                   child: const Text('Apagar'),
+        //                 ),
+        //               ],
+        //             ),
+        //       );
+
+        //       if (confirm == true) {
+        //         final userToken =
+        //             Provider.of<UserProvider>(context, listen: false).userToken;
+        //         if (userToken != null) {
+        //           await Provider.of<HistoryProvider>(
+        //             context,
+        //             listen: false,
+        //           ).deleteHistory(userToken);
+        //         }
+        //       }
+        //     },
+        //   ),
+        // ],
       ),
       body: Container(
         width: double.infinity,
@@ -150,13 +190,19 @@ class _HistoryPageState extends State<HistoryPage> {
                             listen: false,
                           ).userToken;
                       if (userToken != null) {
-                        await historyProvider.loadHistory(userToken);
+                        await historyProvider.loadHistory(
+                          userToken,
+                          forceRefresh: true,
+                        );
                       }
                     }
 
                     if (historyProvider.isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.white),
+                      return Center(
+                        child: LoadingAnimationWidget.progressiveDots(
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       );
                     } else if (historyProvider.errorMessage != null) {
                       return Center(
@@ -172,28 +218,28 @@ class _HistoryPageState extends State<HistoryPage> {
                       return RefreshIndicator(
                         onRefresh: _refreshHistory,
                         color: Colors.white,
-                        backgroundColor: const Color(
-                          0xFF3C5DB7,
-                        ),
-                        child: ListView(
-                          physics:
-                              const AlwaysScrollableScrollPhysics(),
-                          children: const [
-                            SizedBox(height: 50),
-                            Center(
+                        backgroundColor: const Color(0xFF3C5DB7),
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height -
+                                kToolbarHeight,
+                            child: const Center(
                               child: Text(
                                 'Nenhum histórico de visualização recente.',
                                 style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 13,
                                   color: Colors.white,
-                                  fontSize: 16,
                                 ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       );
                     } else {
-                      
                       final Map<String, List<HistoryRecord>> groupedRecords =
                           {};
                       for (var record in historyProvider.historyRecords) {
@@ -227,7 +273,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 20,),
+                                SizedBox(height: 20),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20.0,
@@ -246,13 +292,20 @@ class _HistoryPageState extends State<HistoryPage> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: recordsInGroup.length,
                                   itemBuilder: (context, itemIndex) {
-                                    final record = recordsInGroup.reversed.toList()[itemIndex];
+                                    final record =
+                                        recordsInGroup.reversed
+                                            .toList()[itemIndex];
                                     final content = record.conteudo;
                                     final thumbnailUrl = getYoutubeThumbnail(
                                       content.url,
                                     );
-                                    final userToken = Provider.of<UserProvider>(context, listen: false).userToken;
-                                    final String customUrl = 'https://starsoul.netlify.app/app/content/${content.id}?authToken=$userToken';
+                                    final userToken =
+                                        Provider.of<UserProvider>(
+                                          context,
+                                          listen: false,
+                                        ).userToken;
+                                    final String customUrl =
+                                        'https://starsoul.netlify.app/app/content/${content.id}?authToken=$userToken';
 
                                     return GestureDetector(
                                       onTap: () => _launchURL(customUrl),
@@ -269,7 +322,8 @@ class _HistoryPageState extends State<HistoryPage> {
                                           ),
                                         ),
                                         child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
                                           children: [
                                             if (thumbnailUrl != null)
                                               ClipRRect(

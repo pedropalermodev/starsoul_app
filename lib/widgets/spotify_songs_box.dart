@@ -21,7 +21,7 @@ class SpotifySongsWidget extends StatelessWidget {
 
     if (contentProvider.isLoading) {
       return SizedBox(
-        height: 130,
+        height: 90,
         child: Shimmer.fromColors(
           baseColor: Colors.grey[500]!,
           highlightColor: Colors.grey[600]!,
@@ -62,7 +62,16 @@ class SpotifySongsWidget extends StatelessWidget {
     if (spotifySongs.isEmpty) {
       return const SizedBox(
         height: 120,
-        child: Center(child: Text('Nenhuma música disponível', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12 ))),
+        child: Center(
+          child: Text(
+            'Nenhuma música disponível',
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontSize: 13,
+              color: Colors.white,
+            ),
+          ),
+        ),
       );
     }
 

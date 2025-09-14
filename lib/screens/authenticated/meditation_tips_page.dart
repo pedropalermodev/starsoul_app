@@ -175,16 +175,16 @@ class _MeditationTipsPageState extends State<MeditationTipsPage> {
           ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 5.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Jornada Estelar',
                     style: TextStyle(
-                      fontSize: 29,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.0,
                       color: Color(0xFFD9E9F7),
                     ),
                   ),
@@ -196,12 +196,12 @@ class _MeditationTipsPageState extends State<MeditationTipsPage> {
                       fontWeight: FontWeight.w300,
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 25),
                   // Lista de cards das dicas com o novo design.
                   Column(
                     children: meditationTips.map((tip) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 20.0),
+                        padding: const EdgeInsets.only(bottom: 10.0),
                         child: TipCard(
                           tip: tip,
                           onTap: () {
@@ -325,7 +325,7 @@ class TipCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis, // Adiciona '...' se o texto for muito longo
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: Color(0xFFD9E9F7),
                         ),
                       ),

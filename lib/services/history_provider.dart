@@ -28,8 +28,11 @@ class HistoryProvider with ChangeNotifier {
         final cacheHistory = prefs.getString('history_cache');
         if (cacheHistory != null) {
           final List<dynamic> jsonList = json.decode(cacheHistory);
-          _historyRecords = jsonList.map((json) => HistoryRecord.fromJson(json)).toList();
-          print('Histórico carregado do cache! Total: ${_historyRecords.length}');
+          _historyRecords =
+              jsonList.map((json) => HistoryRecord.fromJson(json)).toList();
+          print(
+            'Histórico carregado do cache! Total: ${_historyRecords.length}',
+          );
           _isLoading = false;
           notifyListeners();
           return;
@@ -49,9 +52,12 @@ class HistoryProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
-        _historyRecords = jsonList.map((json) => HistoryRecord.fromJson(json)).toList();
+        _historyRecords =
+            jsonList.map((json) => HistoryRecord.fromJson(json)).toList();
         await prefs.setString('history_cache', json.encode(jsonList));
-        print('Histórico carregado da API e salvo no cache! Total: ${_historyRecords.length}');
+        print(
+          'Histórico carregado da API e salvo no cache! Total: ${_historyRecords.length}',
+        );
       } else if (response.statusCode == 400) {
         _errorMessage = 'Sessão expirada. Por favor, faça login novamente.';
         print('Erro de autenticação no histórico: ${response.statusCode}');
@@ -62,6 +68,43 @@ class HistoryProvider with ChangeNotifier {
       }
     } catch (e) {
       _errorMessage = 'Erro na requisição ou decodificação do histórico: $e';
+      print(_errorMessage);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteHistory(String userToken) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      var url = Uri.parse(
+        'https://starsoul-backend.onrender.com/api/conteudo-usuario/historico',
+      );
+
+      var response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $userToken',
+        },
+      );
+
+      if (response.statusCode == 204 || response.statusCode == 200 ) {
+        // Limpa cache e lista local
+        _historyRecords = [];
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('history_cache');
+        print('Histórico deletado com sucesso!');
+      } else {
+        _errorMessage = 'Falha ao deletar histórico: ${response.statusCode}';
+        print(_errorMessage);
+      }
+    } catch (e) {
+      _errorMessage = 'Erro ao deletar histórico: $e';
       print(_errorMessage);
     } finally {
       _isLoading = false;

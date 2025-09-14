@@ -1,5 +1,6 @@
 // lib/pages/add_daily_page.dart
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:starsoul_app/services/daily_provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
@@ -284,8 +285,9 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
                       ),
                       child:
                           _isLoading
-                              ? const CircularProgressIndicator(
+                              ? LoadingAnimationWidget.progressiveDots(
                                 color: Colors.white,
+                                size: 30,
                               )
                               : const Text(
                                 'Salvar dia',

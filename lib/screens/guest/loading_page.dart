@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:starsoul_app/services/user_provider.dart';
 
@@ -51,8 +52,9 @@ class _LoadingPageState extends State<LoadingPage> {
           children: [
             Image.asset('assets/mark/logo.png', width: 150, height: 150),
             SizedBox(height: 20),
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            LoadingAnimationWidget.progressiveDots(
+              color: Colors.white,
+              size: 40,
             ),
           ],
         ),

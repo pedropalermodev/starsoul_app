@@ -120,7 +120,8 @@ class _DailyPageState extends State<DailyPage> {
                               "Nenhuma anotação encontrada. Clique no '+' para adicionar uma.",
                               style: TextStyle(
                                 fontStyle: FontStyle.italic,
-                                fontSize: 12,
+                                fontSize: 13,
+                                color: Colors.white
                               ),
                               textAlign: TextAlign.center,
                             ),

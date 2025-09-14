@@ -52,12 +52,14 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     _nicknameController.text = userProvider.userNickname ?? '';
 
     if (userProvider.userBirthDate != null) {
-  _selectedBirthDate = userProvider.userBirthDate;
-  _birthdayController.text = DateFormat('dd/MM/yyyy').format(_selectedBirthDate!);
-  } else {
-    _birthdayController.text = '';
-    _selectedBirthDate = null;
-  }
+      _selectedBirthDate = userProvider.userBirthDate;
+      _birthdayController.text = DateFormat(
+        'dd/MM/yyyy',
+      ).format(_selectedBirthDate!);
+    } else {
+      _birthdayController.text = '';
+      _selectedBirthDate = null;
+    }
 
     if (userProvider.userGender != null &&
         _genderOptions.contains(userProvider.userGender)) {
@@ -196,9 +198,26 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
     });
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Dados atualizados com sucesso!')),
-      );
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: const [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 10),
+                Expanded(child: Text('Dados atualizados com sucesso!')),
+              ],
+            ),
+            backgroundColor: Colors.green[600],
+            behavior: SnackBarBehavior.floating, // flutua sobre o conteúdo
+            margin: const EdgeInsets.all(16), // deixa com espaço nas bordas
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -338,7 +357,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 20),
 
                         Center(
                           child: ElevatedButton(
