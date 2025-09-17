@@ -46,6 +46,9 @@ class _MotivationalPhraseWidgetState extends State<MotivationalPhraseWidget> {
     final phrases = contentProvider.motivationalPhrases;
 
     if (contentProvider.isLoading) {
+      final width = MediaQuery.of(context).size.width - 40;
+
+
       return SizedBox(
         height: 130,
         child: Shimmer.fromColors(
@@ -61,8 +64,8 @@ class _MotivationalPhraseWidgetState extends State<MotivationalPhraseWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
+                      width: width,
                       height: 80,
-                      width: 352,
                       decoration: BoxDecoration(
                         color: Colors.grey[600],
                         borderRadius: BorderRadius.circular(8),

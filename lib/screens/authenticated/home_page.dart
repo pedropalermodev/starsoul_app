@@ -122,11 +122,13 @@ class _HomePageState extends State<HomePage> {
                     highlightColor: Colors.grey[600]!,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 2,
+                      itemCount: 5,
                       itemBuilder: (context, index) {
                         return Container(
                           width: 170,
-                          margin: EdgeInsets.only(right: index == 1 ? 0 : 10),
+                          margin: EdgeInsets.only(
+                            right: 10,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
