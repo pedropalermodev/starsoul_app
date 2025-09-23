@@ -75,6 +75,7 @@ class _DailyPageState extends State<DailyPage> {
                     return Consumer<DailyProvider>(
                       builder: (consumerContext, dailyProvider, _) {
                         if (dailyProvider.isLoading) {
+                          final width = MediaQuery.of(context).size.width - 40;
                           return SizedBox(
                             height: 130,
                             child: Shimmer.fromColors(
@@ -90,7 +91,7 @@ class _DailyPageState extends State<DailyPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          width: 352,
+                                          width: width,
                                           height: 100,
                                           decoration: BoxDecoration(
                                             color: Colors.grey[700],
