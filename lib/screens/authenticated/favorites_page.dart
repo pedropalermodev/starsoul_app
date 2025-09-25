@@ -94,6 +94,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Consumer<FavoritesProvider>(
       builder: (context, favoritesProvider, child) {
         if (favoritesProvider.isLoading) {
+          final width = MediaQuery.of(context).size.width - 40;
+          
           return Shimmer.fromColors(
             baseColor: Colors.grey[700]!,
             highlightColor: Colors.grey[500]!,
@@ -123,44 +125,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: 180,
+                              width: width,
                               height: 90,
                               decoration: BoxDecoration(
                                 color: Colors.grey[700],
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 16,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[700],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                const SizedBox(height: 7),
-                                Container(
-                                  height: 16,
-                                  width: 160,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[700],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                const SizedBox(height: 7),
-                                Container(
-                                  height: 16,
-                                  width: 110,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[700],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
                         ),

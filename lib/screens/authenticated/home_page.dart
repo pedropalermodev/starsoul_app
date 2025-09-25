@@ -86,7 +86,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
 
-    return Column(
+    return SingleChildScrollView(
+    physics: const BouncingScrollPhysics(),
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -111,142 +113,126 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 10),
 
         SizedBox(
-          height: 150,
-          child: Consumer<HistoryProvider>(
-            builder: (context, historyProvider, child) {
-              if (historyProvider.isLoading) {
-                return SizedBox(
-                  height: 130,
-                  child: Shimmer.fromColors(
-                    baseColor: Colors.grey[500]!,
-                    highlightColor: Colors.grey[600]!,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: 170,
-                          margin: EdgeInsets.only(
-                            right: 10,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 95,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[600],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                height: 16,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[600],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              } else if (historyProvider.errorMessage != null) {
-                return Center(
-                  child: Text(
-                    'Erro: ${historyProvider.errorMessage}',
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                );
-              } else if (historyProvider.historyRecords.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'Nenhum histórico de visualização recente.',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 13,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              } else {
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: historyProvider.historyRecords.length,
-                  itemBuilder: (context, index) {
-                    final record =
-                        historyProvider.historyRecords.reversed.toList()[index];
-                    final content = record.conteudo;
-                    final thumbnailUrl = getYoutubeThumbnail(content.url);
-                    final token = userProvider.userToken;
-                    final String customUrl =
-                        'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
-
-                    return GestureDetector(
-                      onTap: () => _launchURL(customUrl),
-                      child: Container(
-                        width: 170,
-                        margin: const EdgeInsets.only(right: 10.0),
-
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (thumbnailUrl != null)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  thumbnailUrl,
-                                  width: 170,
-                                  height: 95,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          const Icon(
-                                            Icons.broken_image,
-                                            color: Colors.grey,
-                                          ),
-                                ),
-                              )
-                            else
-                              Container(
-                                width: 170,
-                                height: 95,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[800],
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.play_circle_fill,
-                                  color: Colors.white70,
-                                  size: 40,
-                                ),
-                              ),
-
-                            const SizedBox(height: 4),
-                            Text(
-                              content.titulo,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
+  height: 150,
+  child: Consumer<HistoryProvider>(
+    builder: (context, historyProvider, child) {
+      if (historyProvider.isLoading) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[500]!,
+          highlightColor: Colors.grey[600]!,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return Container(
+                width: 170,
+                margin: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 95,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    );
-                  },
-                );
-              }
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
-        ),
+        );
+      } else if (historyProvider.historyRecords.isEmpty) {
+        return const Center(
+          child: Text(
+            'Nenhum histórico de visualização recente.',
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontSize: 13,
+              color: Colors.white,
+            ),
+          ),
+        );
+      } else {
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: historyProvider.historyRecords.length,
+          itemBuilder: (context, index) {
+            final record =
+                historyProvider.historyRecords.reversed.toList()[index];
+            final content = record.conteudo;
+            final thumbnailUrl = getYoutubeThumbnail(content.url);
+            final token = userProvider.userToken;
+            final String customUrl =
+                'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
 
+            return GestureDetector(
+              onTap: () => _launchURL(customUrl),
+              child: Container(
+                width: 170,
+                margin: const EdgeInsets.only(right: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (thumbnailUrl != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          thumbnailUrl,
+                          width: 170,
+                          height: 95,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        width: 170,
+                        height: 95,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[800],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.play_circle_fill,
+                          color: Colors.white70,
+                          size: 40,
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                    Text(
+                      content.titulo,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }
+    },
+  ),
+),
         const SizedBox(height: 5),
 
         Container(
@@ -276,7 +262,9 @@ class _HomePageState extends State<HomePage> {
           assetPath: "assets/banner/banner1.png",
           linkUrl: "https://chat.whatsapp.com/J6zH2F8siTL3rhikL1kz0L",
         ),
+        const SizedBox(height: 15),
       ],
+      ),
     );
   }
 }

@@ -30,7 +30,7 @@ class BannerWidget extends StatelessWidget {
           assetPath,
           fit: BoxFit.cover,
           width: double.infinity,
-          height: 108,
+          height: 110,
         ),
       ),
     );

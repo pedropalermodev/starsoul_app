@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -335,13 +336,9 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     child:
                                         _isLoading
-                                            ? SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                color: Colors.white,
-                                                strokeWidth: 2,
-                                              ),
+                                            ? LoadingAnimationWidget.progressiveDots(
+                                              color: Colors.white,
+                                              size: 20,
                                             )
                                             : Text(
                                               'Entrar',
