@@ -201,28 +201,50 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
-              children: const [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 10),
-                Expanded(child: Text('Dados atualizados com sucesso!')),
-              ],
-            ),
-            backgroundColor: Colors.green[600],
-            behavior: SnackBarBehavior.floating, // flutua sobre o conteúdo
-            margin: const EdgeInsets.all(16), // deixa com espaço nas bordas
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+            margin: const EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            duration: const Duration(seconds: 3),
+            content: Row(
+              children: const [
+                Icon(
+                  Icons.check_circle,
+                  color: Color.fromARGB(255, 71, 195, 110),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Dados atualizados com sucesso!',
+                    style: TextStyle(color: Color.fromARGB(255, 71, 195, 110)),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Falha ao atualizar dados. Verifique sua conexão e tente novamente.',
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Falha ao atualizar dados. Verifique sua conexão e tente novamente.',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
           ),
         ),
       );

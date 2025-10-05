@@ -15,7 +15,26 @@ class BannerWidget extends StatelessWidget {
     final Uri uri = Uri.parse(linkUrl);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Não foi possível abrir o link")),
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Opa, não conseguimos abrir o link! Verifique se o seu dispositivo tem um navegador instalado (como Chrome ou Safari) e tente de novo.',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
   }
@@ -30,7 +49,7 @@ class BannerWidget extends StatelessWidget {
           assetPath,
           fit: BoxFit.cover,
           width: double.infinity,
-          height: 110,
+          height: 120,
         ),
       ),
     );

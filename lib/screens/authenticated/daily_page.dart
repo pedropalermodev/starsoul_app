@@ -122,32 +122,38 @@ class _DailyPageState extends State<DailyPage> {
                               style: TextStyle(
                                 fontStyle: FontStyle.italic,
                                 fontSize: 13,
-                                color: Colors.white
+                                color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           );
                         }
 
+                        final reversedNotes =
+                            dailyProvider.notes.reversed.toList();
+
                         return ListView.separated(
                           padding: const EdgeInsets.only(bottom: 5),
-                          itemCount: dailyProvider.notes.length,
+                          itemCount: reversedNotes.length,
                           separatorBuilder:
                               (context, index) => const SizedBox(height: 8),
                           itemBuilder: (itemBuilderContext, index) {
-                            final note = dailyProvider.notes[index];
+                            final note = reversedNotes[index];
+                            final adjustedDate = note.dataPublicacao.subtract(
+                              const Duration(hours: 3),
+                            );
                             final moodIcon =
                                 _moodIcons[note.humor] ?? Icons.mood_bad;
                             final moodColor =
                                 _moodColors[note.humor] ?? Colors.grey;
 
                             final formattedDate =
-                                "${note.dataPublicacao.day.toString().padLeft(2, '0')} de "
-                                "${_getMonthName(note.dataPublicacao.month)} de "
-                                "${note.dataPublicacao.year}";
+                                "${adjustedDate.day.toString().padLeft(2, '0')} de "
+                                "${_getMonthName(adjustedDate.month)} de "
+                                "${adjustedDate.year}";
                             final formattedTime =
-                                "${note.dataPublicacao.hour.toString().padLeft(2, '0')}:"
-                                "${note.dataPublicacao.minute.toString().padLeft(2, '0')}";
+                                "${adjustedDate.hour.toString().padLeft(2, '0')}:"
+                                "${adjustedDate.minute.toString().padLeft(2, '0')}";
 
                             return Container(
                               padding: const EdgeInsets.all(16.0),
@@ -261,21 +267,93 @@ class _DailyPageState extends State<DailyPage> {
                                                   );
 
                                               if (mounted) {
+                                                final isSuccess =
+                                                    dailyProvider
+                                                        .errorMessage ==
+                                                    null;
+
                                                 ScaffoldMessenger.of(
                                                   scaffoldMessengerContext,
                                                 ).showSnackBar(
                                                   SnackBar(
-                                                    content: Text(
-                                                      dailyProvider
-                                                              .errorMessage ??
-                                                          'Anotação deletada!',
-                                                    ),
+                                                    behavior:
+                                                        SnackBarBehavior
+                                                            .floating,
                                                     backgroundColor:
-                                                        dailyProvider
-                                                                    .errorMessage ==
-                                                                null
-                                                            ? Colors.green
-                                                            : Colors.red,
+                                                        isSuccess
+                                                            ? const Color.fromRGBO(
+                                                              255,
+                                                              255,
+                                                              255,
+                                                              1,
+                                                            )
+                                                            : const Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              206,
+                                                              206,
+                                                            ),
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                          16,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    content: Row(
+                                                      children: [
+                                                        Icon(
+                                                          isSuccess
+                                                              ? Icons
+                                                                  .check_circle
+                                                              : Icons.error,
+                                                          color:
+                                                              isSuccess
+                                                                  ? const Color.fromARGB(
+                                                                    255,
+                                                                    71,
+                                                                    195,
+                                                                    110,
+                                                                  )
+                                                                  : const Color.fromARGB(
+                                                                    255,
+                                                                    230,
+                                                                    0,
+                                                                    0,
+                                                                  ),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Expanded(
+                                                          child: Text(
+                                                            isSuccess
+                                                                ? 'Anotação deletada com sucesso!'
+                                                                : dailyProvider
+                                                                    .errorMessage!,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  isSuccess
+                                                                      ? const Color.fromARGB(
+                                                                        255,
+                                                                        71,
+                                                                        195,
+                                                                        110,
+                                                                      )
+                                                                      : const Color.fromARGB(
+                                                                        255,
+                                                                        230,
+                                                                        0,
+                                                                        0,
+                                                                      ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 );
                                               }
@@ -285,9 +363,54 @@ class _DailyPageState extends State<DailyPage> {
                                                 ScaffoldMessenger.of(
                                                   scaffoldMessengerContext,
                                                 ).showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      'Erro: Não foi possível deletar a anotação (token ou ID ausente).',
+                                                  SnackBar(
+                                                    behavior:
+                                                        SnackBarBehavior
+                                                            .floating,
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                          255,
+                                                          255,
+                                                          206,
+                                                          206,
+                                                        ), // Fundo Vermelho Claro
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                          16,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    content: Row(
+                                                      children: const [
+                                                        Icon(
+                                                          Icons.error,
+                                                          color: Color.fromARGB(
+                                                            255,
+                                                            230,
+                                                            0,
+                                                            0,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 10),
+                                                        Expanded(
+                                                          child: Text(
+                                                            'Erro: Não foi possível deletar (usuário não logado ou ID ausente).', // Mensagem de Erro
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Color.fromARGB(
+                                                                    255,
+                                                                    230,
+                                                                    0,
+                                                                    0,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 );

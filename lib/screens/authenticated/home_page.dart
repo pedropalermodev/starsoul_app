@@ -87,183 +87,189 @@ class _HomePageState extends State<HomePage> {
     final userProvider = Provider.of<UserProvider>(context);
 
     return SingleChildScrollView(
-    physics: const BouncingScrollPhysics(),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Olá, ${userProvider.userName?.split(' ').first ?? 'Usuário'}!',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-        ),
-        const Text(
-          'Acesse seu histórico, diário e inspirações do dia.',
-          style: TextStyle(color: Color(0xFFCDCDCD)),
-        ),
-
-        const SizedBox(height: 30),
-
-        const Text(
-          'Seu histórico de visualização recente.',
-          style: TextStyle(color: Colors.white),
-        ),
-        const SizedBox(height: 10),
-
-        SizedBox(
-  height: 150,
-  child: Consumer<HistoryProvider>(
-    builder: (context, historyProvider, child) {
-      if (historyProvider.isLoading) {
-        return Shimmer.fromColors(
-          baseColor: Colors.grey[500]!,
-          highlightColor: Colors.grey[600]!,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return Container(
-                width: 170,
-                margin: const EdgeInsets.only(right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 95,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[600],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Container(
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[600],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      } else if (historyProvider.historyRecords.isEmpty) {
-        return const Center(
-          child: Text(
-            'Nenhum histórico de visualização recente.',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              fontSize: 13,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Olá, ${userProvider.userName?.split(' ').first ?? 'Usuário'}!',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
               color: Colors.white,
             ),
           ),
-        );
-      } else {
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: historyProvider.historyRecords.length,
-          itemBuilder: (context, index) {
-            final record =
-                historyProvider.historyRecords.reversed.toList()[index];
-            final content = record.conteudo;
-            final thumbnailUrl = getYoutubeThumbnail(content.url);
-            final token = userProvider.userToken;
-            final String customUrl =
-                'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
+          const Text(
+            'Acesse seu histórico, diário e inspirações do dia.',
+            style: TextStyle(color: Color(0xFFCDCDCD)),
+          ),
 
-            return GestureDetector(
-              onTap: () => _launchURL(customUrl),
-              child: Container(
-                width: 170,
-                margin: const EdgeInsets.only(right: 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (thumbnailUrl != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
-                          thumbnailUrl,
+          const SizedBox(height: 30),
+
+          const Text(
+            'Seu histórico de visualização recente.',
+            style: TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 10),
+
+          SizedBox(
+            height: 150,
+            child: Consumer<HistoryProvider>(
+              builder: (context, historyProvider, child) {
+                if (historyProvider.isLoading) {
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey[500]!,
+                    highlightColor: Colors.grey[600]!,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return Container(
                           width: 170,
-                          height: 95,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.broken_image,
-                            color: Colors.grey,
+                          margin: const EdgeInsets.only(right: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 95,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[600],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                height: 16,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[600],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else if (historyProvider.historyRecords.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Nenhum histórico de visualização recente.',
+                      style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 13,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                } else {
+                  final reversedRecords  =
+                      historyProvider.historyRecords..sort(
+                        (a, b) =>
+                            b.dataUltimoAcesso.compareTo(a.dataUltimoAcesso),
+                      );
+
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: reversedRecords.length,
+                    itemBuilder: (context, index) {
+                      final record = reversedRecords[index];
+                      final content = record.conteudo;
+                      final thumbnailUrl = getYoutubeThumbnail(content.url);
+                      final token = userProvider.userToken;
+                      final String customUrl =
+                          'https://starsoul.netlify.app/app/content/${content.id}?authToken=$token';
+
+                      return GestureDetector(
+                        onTap: () => _launchURL(customUrl),
+                        child: Container(
+                          width: 170,
+                          margin: const EdgeInsets.only(right: 10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (thumbnailUrl != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(
+                                    thumbnailUrl,
+                                    width: 170,
+                                    height: 95,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.broken_image,
+                                              color: Colors.grey,
+                                            ),
+                                  ),
+                                )
+                              else
+                                Container(
+                                  width: 170,
+                                  height: 95,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[800],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_circle_fill,
+                                    color: Colors.white70,
+                                    size: 40,
+                                  ),
+                                ),
+                              const SizedBox(height: 4),
+                              Text(
+                                content.titulo,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
-                      )
-                    else
-                      Container(
-                        width: 170,
-                        height: 95,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[800],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.play_circle_fill,
-                          color: Colors.white70,
-                          size: 40,
-                        ),
-                      ),
-                    const SizedBox(height: 4),
-                    Text(
-                      content.titulo,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      }
-    },
-  ),
-),
-        const SizedBox(height: 5),
-
-        Container(
-          height: 80,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 33, 58, 102),
-            borderRadius: BorderRadius.circular(12),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ),
-          child: Center(child: const MotivationalPhraseWidget()),
-        ),
+          const SizedBox(height: 5),
 
-        const SizedBox(height: 15),
+          Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 33, 58, 102),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Center(child: const MotivationalPhraseWidget()),
+          ),
 
-        const Text(
-          'Nossa curadoria especial de playlists para você.',
-          style: TextStyle(color: Colors.white),
-        ),
+          const SizedBox(height: 15),
 
-        Column(
-          children: [const SizedBox(height: 10), const SpotifySongsWidget()],
-        ),
+          const Text(
+            'Nossa curadoria especial de playlists para você.',
+            style: TextStyle(color: Colors.white),
+          ),
 
-        const SizedBox(height: 5),
+          Column(
+            children: [const SizedBox(height: 10), const SpotifySongsWidget()],
+          ),
 
-        BannerWidget(
-          assetPath: "assets/banner/banner1.png",
-          linkUrl: "https://chat.whatsapp.com/J6zH2F8siTL3rhikL1kz0L",
-        ),
-        const SizedBox(height: 15),
-      ],
+          const SizedBox(height: 5),
+
+          BannerWidget(
+            assetPath: "assets/banner/banner1.png",
+            linkUrl: "https://chat.whatsapp.com/J6zH2F8siTL3rhikL1kz0L",
+          ),
+          const SizedBox(height: 15),
+        ],
       ),
     );
   }

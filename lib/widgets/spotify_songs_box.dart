@@ -77,13 +77,15 @@ class SpotifySongsWidget extends StatelessWidget {
       );
     }
 
+    final orderedSongs = spotifySongs.reversed.toList();
+
     return SizedBox(
       height: 90,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: spotifySongs.length,
+        itemCount: orderedSongs.length,
         itemBuilder: (context, index) {
-          final song = spotifySongs[index];
+          final song = orderedSongs[index];
           return GestureDetector(
             onTap: () => _launchURL(song.url),
             child: Container(

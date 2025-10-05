@@ -59,23 +59,50 @@ class _LoginPageState extends State<LoginPage> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Email ou senha inválidos. Verifique suas credenciais.',
-            ),
-            backgroundColor: const Color.fromARGB(255, 117, 32, 25),
-            behavior: SnackBarBehavior.floating,
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        );
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Email ou senha inválidos. Verifique suas credenciais.',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
       }
     } catch (e) {
       print('Erro na requisição: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Não foi possível conectar ao servidor. Tente novamente.',
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: Colors.red,
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Poxa! Parece que estamos com problemas de conexão. Tente novamente.\n\nSe o problema persistir, envie um feedback em starsoul.netlify.app/contact',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     } finally {

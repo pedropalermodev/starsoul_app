@@ -58,12 +58,27 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Erro: ID do usuário não encontrado. Faça login novamente.',
-            ),
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        );
+          content: Row(
+            children: const [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Erro: ID do usuário não encontrado. Faça login novamente.',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
         Navigator.of(context).pop(false);
         return;
       }
@@ -90,39 +105,61 @@ class _AnnotationDailyPageState extends State<AnnotationDailyPage> {
         if (createdNote != null) {
           _clearFields();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: const [
-                  Icon(Icons.check_circle_outline, color: Colors.white),
-                  SizedBox(width: 8),
-                  Text(
-                    'Anotação criada com sucesso!',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.indigo.shade300,
-              duration: const Duration(seconds: 2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              behavior: SnackBarBehavior.floating,
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-          );
+            content: Row(
+              children: const [
+                Icon(
+                  Icons.check_circle,
+                  color: Color.fromARGB(255, 71, 195, 110),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Anotação registrada com sucesso.',
+                    style: TextStyle(color: Color.fromARGB(255, 71, 195, 110)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
           Navigator.of(context).pop(true);
         } else {
-          // Se a criação falhou, exibe o erro
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(dailyProvider.errorMessage!)));
-          // Retorna 'false' para indicar falha
           Navigator.of(context).pop(false);
         }
       } catch (e) {
         print('Exceção inesperada ao enviar anotação: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro de conexão: ${e.toString()}')),
-        );
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Row(
+            children: [
+              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Erro de conexão: ${e.toString()}',
+                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
         Navigator.of(context).pop(false);
       } finally {
         setState(() {
