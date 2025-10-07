@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -50,6 +51,44 @@ class _LoginPageState extends State<LoginPage> {
         final String? token = responseData['token'];
 
         if (token != null && token.isNotEmpty) {
+          // Decodifica o token para ler o tipo de conta
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+          final String? tipoConta =
+              decodedToken['role'] ?? decodedToken['tipoConta'];
+
+          // Se for administrador, bloqueia o login
+          if (tipoConta == 'Administrador') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+                margin: const EdgeInsets.all(16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                content: Row(
+                  children: const [
+                    Icon(Icons.warning, color: Color.fromARGB(255, 230, 0, 0)),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Contas administrativas não podem acessar o aplicativo.',
+                        style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+
+            setState(() {
+              _isLoading = false;
+            });
+            return; // Interrompe o login aqui!
+          }
+
+          // Se passou pela validação, faz login normal
           await _sharedPreferences.setString('token', token);
           await Provider.of<UserProvider>(context, listen: false).login(token);
 
@@ -59,27 +98,27 @@ class _LoginPageState extends State<LoginPage> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color.fromARGB(255, 255, 206, 206),
-          margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          content: Row(
-            children: const [
-              Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Email ou senha inválidos. Verifique suas credenciais.',
-                  style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: const Color.fromARGB(255, 255, 206, 206),
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            content: Row(
+              children: const [
+                Icon(Icons.error, color: Color.fromARGB(255, 230, 0, 0)),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Email ou senha inválidos. Verifique suas credenciais.',
+                    style: TextStyle(color: Color.fromARGB(255, 230, 0, 0)),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
+        );
       }
     } catch (e) {
       print('Erro na requisição: $e');

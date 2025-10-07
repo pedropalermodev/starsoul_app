@@ -2,7 +2,7 @@ name: starsoul_app
 description: ""
 publish_to: 'none'
 
-version: 1.0.4
+version: 1.0.5
 
 
 environment:
